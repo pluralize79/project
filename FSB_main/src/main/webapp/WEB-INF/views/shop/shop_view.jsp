@@ -21,6 +21,10 @@
 	function checkLogin() {
 		alert("회원 전용 입니다. 로그인 후 이용해 주세요.")
 	 }
+	
+	function coupon() {
+		alert("보유한 쿠폰입니다. 마이페이지에서 확인해 주세요.")
+	}
 </script>
 
 <!-- ★★★ 센터로 보내는 div class ★★★ -->
@@ -137,25 +141,24 @@
 				<div style="min-height: 100px;">
   				<div class="collapse collapse-horizontal" id="collapseWidthExample">
     				<div class="card card-body" style="width: 300px;">
-      					<!-- 쿠폰 중복 다운 막기... -->
-      					<c:forEach var="clist" items="${couponList }">
-      						${clist.sc_name }
-      					<c:if test="${empty sessionScope.mbId }">
-							<a href="javascript:checkLogin()">	
-								<button type="button" class="btn btn-outline-primary btn-sm">다운로드</button>
-							</a>
-						</c:if>
-						<c:if test="${not empty sessionScope.mbId }">
-							<c:forEach var="list" items="${myPageCoupon }">
-								<c:if test="${clist.sc_num eq list.sc_num }">
-      								<a href="shop_couponDownload.do?sc_num=${clist.sc_num }&prod_num=${getProd.prod_num}&sc_duedate=${clist.sc_duedate}"><button type="button" class="btn btn-outline-primary btn-sm" disabled>다운로드</button></a>
-    							</c:if>
-    							<%-- <c:if test="${clist.sc_num ne list.sc_num}"> --%>
-    								<a href="shop_couponDownload.do?sc_num=${clist.sc_num }&prod_num=${getProd.prod_num}&sc_duedate=${clist.sc_duedate}"><button type="button" class="btn btn-outline-primary btn-sm">다운로드</button></a>
-    							<%-- </c:if> --%>
+      					<c:if test="${empty sessionScope.mbId }">	
+      						<c:forEach var="clist" items="${couponList }">
+      							${clist.sc_name }
+      							<a href="javascript:checkLogin()">
+      								<button type="button" class="btn btn-outline-primary btn-sm">다운로드</button>
+      							</a>
+      						</c:forEach>
+      					</c:if>
+      					<c:if test="${not empty sessionScope.mbId }">
+      						<c:forEach var="mylist" items="${myPageCoupon }">
+      							${mylist.sc_name }
+								<a href="javascript:coupon()"><button type="button" class="btn btn-outline-primary btn-sm" disabled>다운로드</button></a>
     						</c:forEach>
-    					</c:if>
-    					</c:forEach>
+      						<c:forEach var="exlist" items="${exlist }">
+      							${exlist.sc_name }
+								<a href="shop_couponDownload.do?sc_num=${exlist.sc_num }&prod_num=${getProd.prod_num}"><button type="button" class="btn btn-outline-primary btn-sm">다운로드</button></a>
+    						</c:forEach>
+      					</c:if>
     				</div>
   				</div>
 				</div>

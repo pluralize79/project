@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ezen.FSB.dto.MemberDTO;
+import com.ezen.FSB.dto.PointHistoryDTO;
 import com.ezen.FSB.dto.ShopProductDTO;
 import com.ezen.FSB.dto.ShopQnADTO;
 import com.ezen.FSB.dto.ShopReviewDTO;
@@ -421,9 +422,14 @@ public class ShopMyPageController {
 		MemberDTO dto = (MemberDTO)session.getAttribute("login_mem");
 		System.out.println("멤버넘버 포인트 하이" + dto.getMem_num());
 		
+		// 갖고있는 총 포인트
 		ModelAndView mav = new ModelAndView();
-		mav.addObject("getMemNum", dto.getMem_num());
+		int point_total = shopMyPageMapper.getTotalPoint(dto.getMem_num());
+		mav.addObject("pointTotal", point_total);
 		
+		// 포인트 내역
+		List<PointHistoryDTO> list = shopMyPageMapper.MemPointList(dto.getMem_num());
+		mav.addObject("MemPointList", list);
 		
 		mav.setViewName("shop/myPage_point");
 		return mav;

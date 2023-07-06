@@ -14,7 +14,7 @@
     <div class="col-md-6">
     	<div class="card-body">
       		<h5 class="card-title">전체 보유 포인트</h5>
-      		<p class="card-text">100point
+      		<p class="card-text">${pointTotal }point
       	</div>
     </div>
   </div>
@@ -23,21 +23,21 @@
 	<table class="table" width="100%">
   		<thead class="table-light">
     		<tr align="center">
-    			<th width="10%">번호</th>
-    			<th width="20%">사용 날짜</th>
+    			<th width="20%">발생 날짜</th>
     			<th width="30%">포인트 사용 내역</th>
     			<th width="20%">사용 포인트</th>
-    			<th width="20%">잔여 포인트</th>
+    			<th width="30%">잔여 포인트</th>
     		</tr>
   		</thead>
   		<tbody>
-    		<tr align="center">
-    			<td>1</td>
-    			<td>230626</td>
-    			<td>상품 구매</td>
-    			<td>4</td>
-    			<td>5</td>
-    		</tr>
+    		<c:forEach var="list" items="${MemPointList }">
+    			<tr align="center">
+    				<td>${list.point_regdate }</td>
+    				<td>${list.point_content }</td>
+    				<td>${list.point_type } ${list.point_amount }</td>
+    				<td>${list.point_total }</td>
+    			</tr>
+    		</c:forEach>
   		</tbody>
 	</table>
 </td>

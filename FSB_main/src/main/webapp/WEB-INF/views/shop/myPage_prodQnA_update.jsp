@@ -29,29 +29,29 @@
 				<td>
 					<select name ="sq_type" class="form-select" aria-label="Default select example">
 					 <!--  <option selected>문의 종류를 선택해주세요.</option> -->
-						<c:if test="${getQnA.sq_type eq 'prod_QnA' }">
-					 		 <option value="prod_QnA" selected>상품 문의</option>
-					 		 <option value="deli_QnA">배송 문의</option>
-					 		 <option value="return_QnA">취소/반품 문의</option>
-					 		 <option value="etc_QnA">기타 문의</option>
+						<c:if test="${getQnA.sq_type eq '상품 문의' }">
+					 		 <option value="상품 문의" selected>상품 문의</option>
+					 		 <option value="배송 문의">배송 문의</option>
+					 		 <option value="취소/반품/교환 문의">취소/반품 문의</option>
+					 		 <option value="기타 문의">기타 문의</option>
 					  	</c:if>
-					  	<c:if test="${getQnA.sq_type eq 'deli_QnA' }">
-					  		<option value="prod_QnA">상품 문의</option>
-					  		<option value="deli_QnA" selected>배송 문의</option>
-					 		<option value="return_QnA">취소/반품/교환 문의</option>
-					 		<option value="etc_QnA">기타 문의</option>
+					  	<c:if test="${getQnA.sq_type eq '배송 문의' }">
+					  		<option value="상품 문의">상품 문의</option>
+					  		<option value="배송 문의" selected>배송 문의</option>
+					 		<option value="취소/반품/교환 문의">취소/반품/교환 문의</option>
+					 		<option value="기타 문의">기타 문의</option>
 					  	</c:if>
-					  	<c:if test="${getQnA.sq_type eq 'return_QnA' }">
-					  		<option value="prod_QnA">상품 문의</option>
-					  		<option value="deli_QnA">배송 문의</option>
-					  		<option value="return_QnA" selected>취소/반품/교환 문의</option>
-					  		<option value="etc_QnA">기타 문의</option>
+					  	<c:if test="${getQnA.sq_type eq '취소/반품/교환 문의' }">
+					  		<option value="상품 문의">상품 문의</option>
+					  		<option value="배송 문의">배송 문의</option>
+					  		<option value="취소/반품/교환 문의" selected>취소/반품/교환 문의</option>
+					  		<option value="기타 문의">기타 문의</option>
 					  	</c:if>
-					  	<c:if test="${getQnA.sq_type eq 'etc_QnA' }">
-					  		<option value="prod_QnA">상품 문의</option>
-					  		<option value="deli_QnA">배송 문의</option>
-					  		<option value="return_QnA">취소/반품/교환 문의</option>
-					  		<option value="etc_QnA" selected>기타 문의</option>
+					  	<c:if test="${getQnA.sq_type eq '기타 문의' }">
+					  		<option value="상품 문의">상품 문의</option>
+					  		<option value="배송 문의">배송 문의</option>
+					  		<option value="취소/반품/교환 문의">취소/반품/교환 문의</option>
+					  		<option value="기타 문의" selected>기타 문의</option>
 					  	</c:if>
 					</select>
 				</td>

@@ -92,11 +92,11 @@
             </ul>
           </li>
         <c:if test="${empty sessionScope.mbId }">
-           <li class="nav-item"><h5><a class="nav-link active" aria-current="page" href="javascript:checkLogin()">마이페이지</a></h5></li>
+        	<li class="nav-item"><a class="nav-link active" aria-current="page" href="javascript:checkLogin()">마이페이지</a></li>
         </c:if>
         <c:if test="${not empty sessionScope.mbId }">
-           <li class="nav-item"><h5><a class="nav-link active" aria-current="page" href="user_shop_myPage.do">마이페이지</a></h5></li>
-        </c:if>
+        	<li class="nav-item"><a class="nav-link active" aria-current="page" href="user_shop_myPage.do">마이페이지</a></li>
+        </c:if>	
           <li class="nav-item">
            <h5> <a class="nav-link active" aria-current="page" href="shop_">고객센터</a></h5>
           </li>          

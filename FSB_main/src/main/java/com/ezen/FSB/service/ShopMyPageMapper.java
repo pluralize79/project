@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ezen.FSB.dto.PointHistoryDTO;
 import com.ezen.FSB.dto.ShopCouponDTO;
 import com.ezen.FSB.dto.ShopQnADTO;
 import com.ezen.FSB.dto.ShopReviewDTO;
@@ -41,7 +42,6 @@ public class ShopMyPageMapper {
 	public int updateMyPageReivew(int sr_num) {
 		return sqlSession.update("updateMyPageReivew", sr_num);
 	}
-	
 	
 	// 페이지 번호를 위한 shopReviewCount
 	public int shopReviewCount(int mem_num) {
@@ -83,7 +83,12 @@ public class ShopMyPageMapper {
 		return sqlSession.insert("couponDownload2", params);
 	}
 	
-	// 내 쿠폰
+	// 쿠폰 날짜 가져오기
+	public String getCouponDate(int sc_num) {
+		return sqlSession.selectOne("getCouponDate", sc_num);
+	}
+	
+	// 내가 보유한 쿠폰 리스트
 	public List<ShopUserCouponDTO> myPageCoupon(int mem_num) {
 		return sqlSession.selectList("myPageCoupon", mem_num);
 	}
@@ -92,4 +97,25 @@ public class ShopMyPageMapper {
 	public int getCoupon(int mem_num) {
 		return sqlSession.selectOne("getCoupon", mem_num);
 	}
+	
+	// 멤버 별 첫 포인트 세팅
+	public int memberPoint(PointHistoryDTO dto) {
+		return sqlSession.insert("memberPoint", dto);
+	}
+	
+	// 리뷰 작성 시 포인트 적립
+	public int reviewPoint(PointHistoryDTO dto) {
+		return sqlSession.insert("reviewPoint", dto);
+	}
+	
+	// 멤버 별로 갖고있는 총 포인트
+	public int getTotalPoint(int mem_num) {
+		return sqlSession.selectOne("getTotalPoint", mem_num);
+	}
+	
+	// 멤버 별로 포인트 내역
+	public List<PointHistoryDTO> MemPointList(int mem_num) {
+		return sqlSession.selectList("MemPointList", mem_num);
+	}
+
 }

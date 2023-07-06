@@ -14,108 +14,41 @@
 			<div class="list-group list-group-flush border-bottom scrollarea">
 				<!-- 피드 본문 -->
 				<div class="list-group-item py-3 lh-sm">
-					<div class="d-flex w-100 align-items-center justify-content-between">
-		        		<div class="container" style="padding: 1.5rem;">
-		        			<div class="row">
-			        			<div class="col" align="left">
-			        				<img src="resources/img/${feed.prof_img}" width="25" height="25">&nbsp
-			          				<strong>${feed.mem_nickname}</strong>
-									<c:if test="${feed.prof_open == 'secret'}">
-										<svg xmlns="http://www.w3.org/2000/svg" width="15" height="12" fill="#A6A6A6" class="bi bi-lock-fill" viewBox="0 0 16 16" preserveAspectRatio="none">
-		  									<path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
-										</svg>
-									</c:if>
-									<small class="text-muted" style="margin-left: 0.5rem;">${feed.mem_id}</small>
-			          			</div>
-			          			<div class="col-auto" align="right" style="padding-top: 0.3em;">
-			          				<small class="text-muted">| 신고</small>
-			          			</div>
-		          			</div>
-		          			<div class="row mb-2" align="right">
-	          					<div class="col-12" align="right">
-	          						<svg fill="#A6A6A6" width="16" height="20"><use xlink:href="#location"></use></svg>
-	          						<small class="text-muted">아직 위치정보못함</small>
-	          					</div>
-		          			</div>
-		          			<div class="row">
-		          				<div class="small tl-content-box-outer mb-3">
-       								<div class="tl-content-box-inner">
-       									${feed.feed_content}
-       								</div>
-       							</div>
-		          			</div>
-	       					<div class="row">
-	       						<!-- 이미지 1장 -->
-	       						<c:if test="${not empty feed.feed_img1 and empty feed.feed_img2}">
-	       							<div class="col-4 container no-pm" style="width: 100%; height: 20rem;">
-										<img class="tl-img" src="resources/img/${feed.feed_img1}">
-	       							</div>
-	       						</c:if>
-	       						<!-- 이미지 2장 -->
-	       						<c:if test="${not empty feed.feed_img1 and not empty feed.feed_img2 and empty feed.feed_img3}">
-	       							<div class="col-4 container" style="height: 7rem;">
-	       								<div class="row" style="height: 100%">
-											<div class="col-6 no-pm">
-												<img class="tl-img" src="resources/img/${feed.feed_img1}">
-											</div>
-											<div class="col-6 no-pm">
-												<img class="tl-img" src="resources/img/${feed.feed_img2}">
-											</div>
-	       								</div>
-	       							</div>
-	       						</c:if>
-	       						<!-- 이미지 3장 -->
-	       						<c:if test="${not empty feed.feed_img1 and not empty feed.feed_img2 and not empty feed.feed_img3 and empty feed.feed_img4}">
-	       							<div class="col-4 container" style="height: 7rem;">
-	       								<div class="row" style="height: 100%">
-											<div class="col-6 no-pm">
-												<img class="tl-img" src="resources/img/${feed.feed_img1}">
-											</div>
-											<div class="col-6 no-pm">
-												<div class="row" style="height: 50%">
-													<img class="tl-img" src="resources/img/${feed.feed_img2}">
-												</div>
-												<div class="row" style="height: 50%">
-													<img class="tl-img" src="resources/img/${feed.feed_img3}">
-												</div>
-											</div>
-	       								</div>
-	       							</div>
-	       						</c:if>
-	       						<!-- 이미지 4장 -->
-	 	       					<c:if test="${not empty feed.feed_img1 and not empty feed.feed_img2 and not empty feed.feed_img3 and not empty feed.feed_img4}">
-	       							<div class="col-4 container" style="height: 7rem;">
-	       								<div class="row" style="height: 50%">
-											<div class="col-6 no-pm">
-												<img class="tl-img" src="resources/img/${feed.feed_img1}">
-											</div>
-											<div class="col-6 no-pm">
-												<img class="tl-img" src="resources/img/${feed.feed_img2}">
-											</div>
-	       								</div>
-										<div class="row" style="height: 50%">
-											<div class="col-6 no-pm">
-												<img class="tl-img" src="resources/img/${feed.feed_img3}">
-											</div>
-											<div class="col-6 no-pm">
-												<img class="tl-img" src="resources/img/${feed.feed_img4}">
-											</div>
-										</div>
-	       							</div>
-	       						</c:if>      						
-       						</div>
-       						<div class="row small">
-       							<div class="col" align="left" style="padding:0">
-	       							<svg class="bi pe-none me-2" fill="#A6A6A6" width="20" height="20"><use xlink:href="#text-quote"></use></svg>
-	       							00
-	       							<svg class="bi pe-none me-2" fill="#A6A6A6" width="20" height="20"><use xlink:href="#heart-empty"></use></svg>
-	       							${feed.feed_like}
-	       							<svg class="bi pe-none me-2" fill="#A6A6A6" width="20" height="20"><use xlink:href="#message"></use></svg>
-	       							쪽지 보내기
-       							</div>
-       						</div>
-		        		</div>
-	        		</div>
+	        		<div class="container d-flex w-100 align-items-center justify-content-between">
+	      				<div class="col mb-3" align="left" style="padding: 15px 0px 0px 22px;">
+	      					<img src="resources/img/default_profile.png" width="25" height="25">&nbsp
+	        				<strong>${id}</strong>
+	        			</div>
+	        			<div class="col container" align="right">
+	        				<div class="row mb-2"><small class="text-muted">| 신고</small></div>
+	        				<div class="row mb-2">
+	        					<div class="col" align="right">
+	        						<svg fill="#A6A6A6" width="16" height="20"><use xlink:href="#location"></use></svg>
+	        						<small class="text-muted">서울시 노원구 ㅁㅁ카페</small>
+	        					</div>
+	        				</div>
+	        			</div>
+	      			</div>
+	        		<div class="container">
+		      			<div class="row">
+	     					<div class="container small">
+	     						<div class="row mb-1" style="padding: 10px 20px 20px 20px; font-size: 16; line-height: 150%; word-break: break-all;">
+	     							어른들은 나에게 속이 보였다 안 보였다 하는 보아뱀의 그림따위는 집어 치우고, 차라리 지리나 산수, 역사, 문법에 재미를 붙여 보라고 충고했다.
+	     						</div>
+	     						<div class="row mb-1"><img src="resources/img/main1.jpg"></div>
+	     						<div class="row">
+	     							<div class="col mt-3 small" style="padding:0">
+	     								<svg class="bi pe-none me-2" fill="#A6A6A6" width="20" height="20"><use xlink:href="#text-quote"></use></svg>
+	     								11
+	     								<svg class="bi pe-none me-2" fill="#A6A6A6" width="20" height="20"><use xlink:href="#heart-empty"></use></svg>
+	     								14
+	     								<svg class="bi pe-none me-2" fill="#A6A6A6" width="20" height="20"><use xlink:href="#message"></use></svg>
+	     								쪽지 보내기
+	     							</div>
+		     					</div>
+		     				</div>
+		     			</div>
+			     	</div>
 		      	</div>
 		      	<!-- 댓글 -->
 	     		<c:forEach var="i" begin="0" end="20" step="1">

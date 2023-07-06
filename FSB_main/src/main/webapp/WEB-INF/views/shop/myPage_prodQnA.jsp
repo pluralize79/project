@@ -26,14 +26,18 @@
   				<div class="accordion-item">
     			<h2 class="accordion-header">
       			<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${dto.sq_num }" aria-expanded="true" aria-controls="collapse${dto.sq_num }">
-        			<c:if test="${dto.sq_secret eq 1 }">
-        				🔒&nbsp;
-        			</c:if>
-        				${dto.sq_title }
-        			<c:if test="${dto.sq_check eq 1 }">
-        				<b>&nbsp;[답변 완료]</b>
-        			</c:if>
-        			 &nbsp;${dto.sq_regdate }
+        			<c:if test="${dto.sq_secret eq 0 && dto.sq_check eq 0}">
+						[${dto.sq_type}]<b>${dto.sq_title}</b><span class="badge bg-primary-subtle border border-primary-subtle text-primary-emphasis"></span>
+					</c:if>
+					<c:if test="${dto.sq_secret eq 0 && dto.sq_check eq 1}">
+						[${dto.sq_type}]<b>${dto.sq_title}</b><span class="badge bg-primary-subtle border border-primary-subtle text-primary-emphasis"><font color="black">답변 완료</font></span>
+					</c:if>
+					<c:if test="${dto.sq_secret eq 1 && dto.sq_check eq 0}">
+						🔒 [${dto.sq_type}]<b>${dto.sq_title}</b><span class="badge bg-primary-subtle border border-primary-subtle text-primary-emphasis"></span>
+					</c:if>
+					<c:if test="${dto.sq_secret eq 1 && dto.sq_check eq 1}">
+						🔒[${dto.sq_type}]<b>${dto.sq_title}</b><span class="badge bg-primary-subtle border border-primary-subtle text-primary-emphasis"><font color="black">답변 완료</font></span>
+					</c:if>
       			</button>
     			</h2>
     			<div id="collapse${dto.sq_num }" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
@@ -42,7 +46,7 @@
       					<a href="shop_myPage_ProdQnA_update.do?sq_num=${dto.sq_num }"><input type="button" value="수정"></a>
       					<a href="javascript:checkDel('${dto.sq_num}','${getMemNum }')"><input type="button" value="삭제"></a>
       				</div>
-        		<strong>문의 내역 : </strong><br>
+        		<strong>❔ 문의 내역 </strong><br>
         		<c:if test="${dto.sq_img1 ne null }">
 					<img src="resources/img/${dto.sq_img1 }" width="100" height="100">
 				</c:if>
@@ -60,7 +64,10 @@
 				<br>
 				<br>
 				<br>
-        		<code>관리자 답변 : </code> 넣어주기
+        		<code>❓ <b>관리자 답변 </b></code>
+        		<br>
+        		<c:if test="${empty dto.sq_reply}">답변을 기다리고 있습니다.</c:if>
+        		<c:if test="${not empty dto.sq_reply}">${dto.sq_reply}</c:if>
       			</div>
     			</div>
   				</div>

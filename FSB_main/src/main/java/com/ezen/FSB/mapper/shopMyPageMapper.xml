@@ -69,7 +69,12 @@
 		insert into f_user_scoupon values(f_usc_seq.nextval, #{mem_num}, #{sc_num}, sysdate, sysdate+30)
 	</insert>
 	
-	<!-- 쇼핑몰 마이페이지 내 쿠폰 -->
+	<!-- 쿠폰 날짜 가져오기 -->
+	<select id="getCouponDate" parameterType="int" resultType="String">
+		select sc_duedate from f_scoupon where sc_num = #{sc_num}
+	</select>
+	
+	<!-- 내가 보유한 쿠폰 리스트 -->
 	<select id="myPageCoupon" parameterType="int" resultType="ShopUserCouponDTO">
 		select * from f_user_scoupon inner join f_scoupon on f_user_scoupon.sc_num = f_scoupon.sc_num where f_user_scoupon.mem_num = #{mem_num} order by usc_duedate
 	</select>
@@ -77,5 +82,25 @@
 	<!-- 멤버 별 쿠폰 개수  -->
 	<select id="getCoupon" parameterType="int" resultType="int">
 		select count(*) from f_user_scoupon inner join f_scoupon on f_user_scoupon.sc_num = f_scoupon.sc_num where f_user_scoupon.mem_num = #{mem_num}
+	</select>
+	
+	<!-- 멤버 별 첫 포인트 세팅 -->
+	<insert id="memberPoint" parameterType="PointHistoryDTO">
+		insert into f_point_history values(f_point_seq.nextval, #{mem_num}, sysdate, #{point_type}, #{point_content}, #{point_amount}, #{point_total})
+	</insert>
+	
+	<!-- 리뷰 작성 시 포인트 적립 -->
+	<insert id="reviewPoint" parameterType="PointHistoryDTO">
+		insert into f_point_history values(f_point_seq.nextval, #{mem_num}, sysdate, #{point_type}, #{point_content}, #{point_amount}, #{point_total})
+	</insert>
+	
+ 	<!-- 멤버 별로 갖고있는 총 포인트 -->
+	<select id="getTotalPoint" parameterType="int" resultType="int">
+		select max(point_total) from f_point_history where mem_num = #{mem_num}
+	</select>
+	
+	<!-- 멤버 별로 포인트 내역 -->
+	<select id="MemPointList" parameterType="int" resultType="PointHistoryDTO">
+		select * from f_point_history where mem_num = #{mem_num} order by point_num desc
 	</select>
  </mapper>

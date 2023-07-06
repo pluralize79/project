@@ -283,7 +283,6 @@ public class GameController {
 		dto.setMem_num(dto2.getMem_num());
 		dto.setGame_num(game_num);
 		
-		
 		ModelAndView mav = new ModelAndView();
 		int res = gameMapper.GameLike(dto);
 		System.out.println(res);
@@ -430,6 +429,9 @@ public class GameController {
 		ModelAndView mav = new ModelAndView("closeWindow");
 //		System.out.println(dto.getReview_num());
 //		System.out.println(dto.getReview_report());
+		HttpSession session = req.getSession();
+		MemberDTO dto2 = (MemberDTO)session.getAttribute("login_mem");
+		dto.setMem_num(dto2.getMem_num());
 		dto.setReport_content(review_report);
 		dto.setReport_target(review_num);
 		dto.setReport_mode("보드게임한줄평");

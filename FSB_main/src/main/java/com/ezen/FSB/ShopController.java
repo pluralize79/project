@@ -3,6 +3,7 @@ package com.ezen.FSB;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ezen.FSB.dto.MemberDTO;
+import com.ezen.FSB.dto.PointHistoryDTO;
 import com.ezen.FSB.dto.ShopCartDTO;
 import com.ezen.FSB.dto.ShopCouponDTO;
 import com.ezen.FSB.dto.ShopProductDTO;
@@ -48,15 +50,38 @@ public class ShopController {
 		HttpSession session = req.getSession();
 		java.text.DecimalFormat df = new java.text.DecimalFormat("###,###");
 		session.setAttribute("df", df);
-		// 임시	
+		
+		
+		// 일단 추가한거
 		ShopReviewDTO rdto =  new ShopReviewDTO();
 	    ShopQnADTO qdto = new ShopQnADTO();
 	    ShopCartDTO cdto = new ShopCartDTO();
-	    rdto.setMem_num(42);
-	    qdto.setMem_num(42);
-	    cdto.setMem_num(42);
-	    session.setAttribute("mem_num", 42);
-			
+	    rdto.setMem_num((int)session.getAttribute("mem_num"));
+        qdto.setMem_num((int)session.getAttribute("mem_num"));
+        cdto.setMem_num((int)session.getAttribute("mem_num"));
+
+	    session.setAttribute("mem_num", (int)session.getAttribute("mem_num"));
+		
+//		MemberDTO dto1 = new MemberDTO();
+//		dto1.setMem_num(1);
+//		dto1.setMem_name("jh960902");
+//		session.setAttribute("dto1", dto1);
+		
+	    // 리뷰 테이블 초기화 작업(회원가입 시 주는 포인트)
+		MemberDTO dto = (MemberDTO)session.getAttribute("login_mem");
+	 	String point_type = "+";
+	 	String point_content = "신규가입";
+	 	int point_amount = 3000;
+	 	int point_total = 3000;
+	 	PointHistoryDTO dto2 = new PointHistoryDTO();
+	 	dto2.setMem_num(dto.getMem_num());
+	 	dto2.setPoint_type(point_type);
+	 	dto2.setPoint_content(point_content);
+	 	dto2.setPoint_amount(point_amount);
+	 	dto2.setPoint_total(point_total);
+	 	int res2 = shopMyPageMapper.memberPoint(dto2);
+	    
+	 	
 		ModelAndView mav = new ModelAndView("shop/shop_main");
 		List<ShopProductDTO> listProd = shopMapper.listProd(); 
 		mav.addObject("listProd", listProd);
@@ -100,7 +125,7 @@ public class ShopController {
 	
 	//쇼핑몰 상품상세 1.상세페이지
 	@RequestMapping("/shop_view.do")
-	public ModelAndView viewShop(@RequestParam int prod_num) {
+	public ModelAndView viewShop(HttpServletRequest req, @RequestParam int prod_num) {
 		ModelAndView mav = new ModelAndView("shop/shop_view");
 		//위쪽 상품상세 꺼내기
 		ShopProductDTO pdto = shopMapper.getProd(prod_num);
@@ -118,12 +143,34 @@ public class ShopController {
 		mav.addObject("couponList", clist);
 		mav.setViewName("shop/shop_view");
 
+		HttpSession session = req.getSession();
+		MemberDTO dto = (MemberDTO)session.getAttribute("login_mem");
+		
+		// 내가 보유한 쿠폰
+		List<ShopUserCouponDTO> list = shopMyPageMapper.myPageCoupon(dto.getMem_num());
+		System.out.println("쿠폰리스트" + list);
+		System.out.println("쿠폰리스트사이즈" + list.size());
+		mav.addObject("myPageCoupon", list);
+		
+		// 안가지고 있는 쿠폰 리스트를 담을 그릇 list로 선언
+		List<ShopCouponDTO> exlist = new ArrayList<>();
+		exlist.addAll(clist);	// clist 복사해서 exlist 복사본 만들기
+		
+		for (ShopCouponDTO cdto : clist) {	// 전체 쿠폰 리스트 for문
+			for(ShopUserCouponDTO udto : list) {	// 가지고 있는 쿠폰 리스트 for문
+				if (cdto.getSc_num() == udto.getSc_num()) {
+					exlist.remove(cdto);
+				}
+			}
+		}
+		mav.addObject("exlist", exlist);
+		
 		return mav;
 	}
 	
 	// 쿠폰 다운로드
 	@RequestMapping("shop_couponDownload.do")
-	public ModelAndView shopCouponDownload(HttpServletRequest req, int sc_num, int prod_num, String sc_duedate) {
+	public ModelAndView shopCouponDownload(HttpServletRequest req, int sc_num, int prod_num) {
 		ModelAndView mav = new ModelAndView("message");
 		ShopProductDTO pdto = shopMapper.getProd(prod_num);
 		mav.addObject("getProd", pdto);
@@ -134,17 +181,13 @@ public class ShopController {
 		// 쿠폰 전체 리스트
 		List<ShopCouponDTO> clist = shopMyPageMapper.couponList();
 		mav.addObject("couponList", clist);
-		
-		// 내가 보유한 쿠폰 리스트
-		List<ShopUserCouponDTO> list = shopMyPageMapper.myPageCoupon(dto.getMem_num());
-		System.out.println("쿠폰리스트" + list);
-		mav.addObject("myPageCoupon", list);
+		System.out.println("쿠폰 전체 리스트" + clist);
 		
 		System.out.println("쿠폰 번호 sc_num" + sc_num);
-		System.out.println("sc_duedate" + sc_duedate);
 		
+		String sc_duedate = shopMyPageMapper.getCouponDate(sc_num);
+		System.out.println("날짜 왔니?"+sc_duedate);
 		
-		ShopCouponDTO dto2 = new ShopCouponDTO();
 		Map<String, Object> params = null;
 		if (!sc_duedate.equals("")) {
 			params = new HashMap<>();
@@ -289,12 +332,26 @@ public class ShopController {
 		HttpSession session = req.getSession();
 		int mem_num = (int)session.getAttribute("mem_num");
 		System.out.println("리뷰등록 멤버넘버" + mem_num);
-		dto.setMem_num(21);
+		dto.setMem_num(mem_num);
 			
 		//insertReview.jsp에서 보낼 수 없으니 dto에 다시 세팅해서 저장!
 		ShopProductDTO pdto = shopMapper.getProd(prod_num);
 		int game_num = pdto.getGame_num();
 		dto.setGame_num(game_num);
+		
+		// 리뷰 작성 시 포인트 적립(300포인트)
+		String point_type = "+";
+		String point_content = "리뷰작성";
+		int point_amount = 300;
+		int point_total = shopMyPageMapper.getTotalPoint(mem_num);
+		System.out.println("토탈 가지고 와줘.." + point_total);
+		PointHistoryDTO dto2 = new PointHistoryDTO();
+		dto2.setMem_num(dto.getMem_num());
+		dto2.setPoint_type(point_type);
+		dto2.setPoint_content(point_content);
+		dto2.setPoint_amount(point_amount);
+		dto2.setPoint_total(point_total+point_amount);
+		int res2 = shopMyPageMapper.reviewPoint(dto2);
 			
 		System.out.println(game_num);
 		String upPath = session.getServletContext().getRealPath("/resources/img");

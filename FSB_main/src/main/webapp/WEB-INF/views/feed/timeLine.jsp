@@ -12,49 +12,30 @@
 	 	border-right-width: 2px;
 	  	border-right-color: #dee2e6;
 	}
-	
-	.tl-content-box-outer {
-		max-height: 7rem;
-		padding-left: 0.8rem; 
-		text-overflow: ellipsis; 
-		overflow: hidden;
-	}
-	
-	.tl-content-box-inner {
-		line-height: 142%; 
-		word-break: break-all;
-		text-overflow: ellipsis;
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 5;
-		overflow: hidden;
-	}
-	
-	.no-pm{
-		padding: 0px !important;
-		margin: 0px !important;
-	}
-	
-	.tl-img {
-		object-fit: cover;
-		width: 100%;
-		height: 100%;
-	}
 </style>
 
 <script>
-	function viewFeed(fff){
-		var feed_num = fff;
-		console.log(feed_num);
+	function viewFeed(i){
+		var id = i;
+		console.log(id);
 		$.ajax({
 		    url:'timeLine_feedView.do', //request 보낼 서버의 경로
 		    type:'get', // 메소드(get, post, put 등)
-		    data:{'feed_num': feed_num}, //보낼 데이터 (json 형식)
+		    data:{'id': id}, //보낼 데이터 (json 형식)
 		    success: function(data) {
-		    	$("#feedView").html(data) ;
+		    	//var test = document.getElementById("feedView"); //javascript문법
+		    	//var test = $("#feedView") //jquery문법
+		    	
+		    	// 추가할 태그
+		    	var content = data
+
+		    	//Id가 feedView인 항목 하단에 content 를 삽입한다.
+		    	$("#feedView").html(content) ;
+
 		    },
 		    error: function(err) {
 		    	alert("ajax 처리 중 에러 발생");
+		        //서버로부터 응답이 정상적으로 처리되지 못했을 때 실행
 		    }
 		});
 
@@ -199,89 +180,81 @@
 	          						<small class="text-muted">아직 위치정보못함</small>
 	          					</div>
 		          			</div>
-	       					<div class="row">
+	       					<div class="row mb-2">
 	       						<!-- 이미지 0장 -->
 	       						<c:if test="${empty feed.feed_img1}">
-	       							<div class="small tl-content-box-outer mb-3">
-	       								<div class="tl-content-box-inner">
-	       									${feed.feed_content}
-	       								</div>
+	       							<div class="container col-8 small" style="padding-left: 0.8em; max-height: 7em; text-overflow:ellipsis; overflow:hidden;">
+	       								${feed.feed_content}
 	       							</div>
 	       						</c:if>
 	       						<!-- 이미지 1장 -->
 	       						<c:if test="${not empty feed.feed_img1 and empty feed.feed_img2}">
-	       							<div class="col-8 small tl-content-box-outer" style="padding-right: 1.6rem;">
+	       							<div class="container col-8 small" style="padding-left: 0.8em; max-height: 7em; text-overflow:ellipsis; overflow:hidden;">
 	       								${feed.feed_content}
 	       							</div>
-	       							<div class="col-4 container no-pm" style="height: 7rem;">
-										<img class="tl-img" src="resources/img/${feed.feed_img1}">
-	       							</div>
+	       							<div class="col-4"><img src="resources/img/${feed.feed_img1}"></div>
 	       						</c:if>
 	       						<!-- 이미지 2장 -->
 	       						<c:if test="${not empty feed.feed_img1 and not empty feed.feed_img2 and empty feed.feed_img3}">
-	       							<div class="col-8 small tl-content-box-outer" style="padding-right: 1.6rem;">
-	       								<div class="tl-content-box-inner">
-	       									${feed.feed_content} ${not empty feed.feed_img1 and not empty feed.feed_img2 and empty feed.feed_img3}
-	       								</div>
+	       							<div class="container col-8 small" style="padding-left: 0.8em; max-height: 7em; text-overflow:ellipsis; overflow:hidden;">
+	       								${feed.feed_content}
 	       							</div>
-	       							<div class="col-4 container" style="height: 7rem;">
-	       								<div class="row" style="height: 100%">
-											<div class="col-6 no-pm">
-												<img class="tl-img" src="resources/img/${feed.feed_img1}">
-											</div>
-											<div class="col-6 no-pm">
-												<img class="tl-img" src="resources/img/${feed.feed_img2}">
-											</div>
+	       							<div class="container col-4 g-1">
+	       								<div class="row">
+	       									<div class="col-6" overflow="hidden">
+			       								<img src="resources/img/${feed.feed_img1}">
+		       								</div>
+	       									<div class="col-6" overflow="hidden">
+	       										<img src="resources/img/${feed.feed_img2}">
+		       								</div>
 	       								</div>
 	       							</div>
 	       						</c:if>
 	       						<!-- 이미지 3장 -->
-	       						<c:if test="${not empty feed.feed_img1 and not empty feed.feed_img2 and not empty feed.feed_img3 and empty feed.feed_img4}">
-	       							<div class="col-8 small tl-content-box-outer" style="padding-right: 1.6rem;">
-	       								<div class="tl-content-box-inner">
-	       									${feed.feed_content}
-	       								</div>
+	       						<c:if test="${not empty feed.feed_img1 and not empty feed.feed_img2 and not empty feed.feed_img3 and empty feed_img4}">
+	       							<div class="container col-8 small" style="padding-left: 0.8em; max-height: 7em; text-overflow:ellipsis; overflow:hidden;">
+	       								${feed.feed_content}
 	       							</div>
-	       							<div class="col-4 container" style="height: 7rem;">
-	       								<div class="row" style="height: 100%">
-											<div class="col-6 no-pm">
-												<img class="tl-img" src="resources/img/${feed.feed_img1}">
-											</div>
-											<div class="col-6 no-pm">
-												<div class="row" style="height: 50%">
-													<img class="tl-img" src="resources/img/${feed.feed_img2}">
-												</div>
-												<div class="row" style="height: 50%">
-													<img class="tl-img" src="resources/img/${feed.feed_img3}">
-												</div>
-											</div>
+	       							<div class="container col-4 g-1">
+	       								<div class="row">
+	       									<div class="col-6" style="overflow: hidden;">
+			       								<img src="resources/img/${feed.feed_img1}" style="object-fit: cover; height: 8em;">
+		       								</div>
+	       									<div class="col-6">
+	       										<div class="row col" style="overflow: hidden; margin-bottom: 0.6em;">
+		       										<img src="resources/img/${feed.feed_img2}" style="object-fit: cover; height: 3.2em;">
+	       										</div>
+	       										<div class="row col" style="overflow: hidden;">
+		       										<img src="resources/img/${feed.feed_img3}" style="object-fit: cover; height: 3.2em;">
+	       										</div>			       								
+		       								</div>
 	       								</div>
 	       							</div>
 	       						</c:if>
 	       						<!-- 이미지 4장 -->
-	 	       					<c:if test="${not empty feed.feed_img1 and not empty feed.feed_img2 and not empty feed.feed_img3 and not empty feed.feed_img4}">
-	       							<div class="col-8 small tl-content-box-outer" style="padding-right: 1.6rem;">
-	       								<div class="tl-content-box-inner">
-	       									${feed.feed_content}
-	       								</div>
+	 	       					<c:if test="${not empty feed.feed_img1 and not empty feed.feed_img2 and not empty feed.feed_img3 and not empty feed_img4}">
+	       							<div class="container col-8 small" style="padding-left: 0.8em; max-height: 7em; text-overflow:ellipsis; overflow:hidden;">
+	       								${feed.feed_content}
 	       							</div>
-	       							<div class="col-4 container" style="height: 7rem;">
-	       								<div class="row" style="height: 50%">
-											<div class="col-6 no-pm">
-												<img class="tl-img" src="resources/img/${feed.feed_img1}">
-											</div>
-											<div class="col-6 no-pm">
-												<img class="tl-img" src="resources/img/${feed.feed_img2}">
-											</div>
+	       							<div class="container col-4 g-1">
+	       								<div class="row">
+	       									<div class="col-6" style="margin-bottom: 0.6em;">
+	       										<div class="row col">
+		       										<img src="resources/img/${feed.feed_img1}">
+	       										</div>
+	       										<div class="row col">
+		       										<img src="resources/img/${feed.feed_img2}">
+	       										</div>			       								
+		       								</div>
+		       								<div class="col-6">
+	       										<div class="row col">
+		       										<img src="resources/img/${feed.feed_img3}">
+	       										</div>
+	       										<div class="row col">
+		       										<img src="resources/img/${feed.feed_img4}">
+	       										</div>			       								
+		       								</div>
 	       								</div>
-										<div class="row" style="height: 50%">
-											<div class="col-6 no-pm">
-												<img class="tl-img" src="resources/img/${feed.feed_img3}">
-											</div>
-											<div class="col-6 no-pm">
-												<img class="tl-img" src="resources/img/${feed.feed_img4}">
-											</div>
-										</div>
 	       							</div>
 	       						</c:if>      						
        						</div>

@@ -76,9 +76,8 @@ public class FeedController {
 	@RequestMapping(value = "/timeLine_feedView.do")
 	public ModelAndView test(@RequestParam Map<String, Object> map) {
 		ModelAndView mav = new ModelAndView("feed/feedView");
-		int feed_num = Integer.parseInt((String)map.get("feed_num"));
-		FeedDTO dto = feedMapper.getFeed(feed_num);
-		mav.addObject("feed", dto);
+		String id = (String) map.get("id");
+		mav.addObject("id", id);
 		
 		return mav;
 	}
@@ -102,7 +101,7 @@ public class FeedController {
 	
 	//피드 등록
 	@RequestMapping(value = "/feedFormOk.do")
-	public ModelAndView feedFormOk(@ModelAttribute FeedDTO dto, BindingResult result, @RequestParam Map<String, Object> map, HttpServletRequest req){
+	public String feedFormOk(@ModelAttribute FeedDTO dto, BindingResult result, @RequestParam Map<String, Object> map, HttpServletRequest req){
 		if(result.hasErrors()){} //항상 바인딩 에러 발생할 수 밖에 없음. 처리할 건 딱히 없음.
 		
 		int feed_num = dto.getFeed_num(); //0이면 새 글, 다른 값이면 임시저장글
@@ -165,8 +164,7 @@ public class FeedController {
 			System.out.println("여기왔니");
 		}
 		
-		ModelAndView mav = feed(req); //메인 실행
-		return mav;
+		return "feed/timeLine";
 	}
 	
 	@RequestMapping(value = "/feedSave.do")

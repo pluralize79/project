@@ -5,10 +5,10 @@
 	<select id="getTimeline" parameterType="int" resultType="feedDTO"> 
 		select * 
  		from f_feed 
- 					inner join f_friend on f_feed.mem_num = f_friend.friend_num 
  					inner join f_profile on f_feed.mem_num = f_profile.mem_num 
  					inner join f_member on f_feed.mem_num = f_member.mem_num 
- 		where (f_friend.mem_num = #{value} and f_friend.friend_accept = 'follow') or f_feed.mem_num = #{value}
+ 					inner join f_friend on f_feed.mem_num = f_friend.friend_num 
+ 		where f_friend.mem_num = #{value} and f_friend.friend_accept = 'follow'
  		order by f_feed.feed_regdate desc
  	</select>
  	<!-- 피드 임시 목록 불러오기 -->
@@ -25,11 +25,7 @@
  	</insert>
  	<!-- 피드 하나 가져오기 -->
  	<select id="getFeed" parameterType="int" resultType="feedDTO">
- 		select * 
- 		from f_feed 
- 					inner join f_profile on f_feed.mem_num = f_profile.mem_num 
- 					inner join f_member on f_feed.mem_num = f_member.mem_num 
- 		where feed_num = #{feed_num}
+ 		select * from f_feed where feed_num = #{feed_num}
  	</select>
  	<!-- 피드 하나 삭제 -->
  	<delete id="deleteFeed" parameterType="int">

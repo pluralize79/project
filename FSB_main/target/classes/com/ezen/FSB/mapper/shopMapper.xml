@@ -65,7 +65,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		update f_shop_review set sr_starrating = #{sr_starrating}, sr_img1 = #{sr_img1}, sr_title = #{sr_title}, sr_content = #{sr_content} where sr_num = #{sr_num}
 	</update>
 	<insert id="shopinsertQnA" parameterType="ShopQnADTO">														<!-- null 들어가도 오류 나지않음!! -->
-		insert into f_shop_qna values(f_shop_qna_seq.nextval, #{prod_num}, #{mem_num}, #{sq_type}, #{sq_img1, jdbcType=VARCHAR}, #{sq_img2, jdbcType=VARCHAR}, #{sq_img3, jdbcType=VARCHAR}, #{sq_img4, jdbcType=VARCHAR}, #{sq_title}, #{sq_content}, #{sq_passwd}, sysdate, 0, #{sq_secret}, 0)
+		insert into f_shop_qna values(f_shop_qna_seq.nextval, #{prod_num}, #{mem_num}, #{sq_type}, #{sq_img1, jdbcType=VARCHAR}, #{sq_img2, jdbcType=VARCHAR}, #{sq_img3, jdbcType=VARCHAR}, #{sq_img4, jdbcType=VARCHAR}, #{sq_title}, #{sq_content}, #{sq_passwd}, sysdate, 0, #{sq_secret}, null)
 	</insert>
 	<delete id="shopdeleteQnA" parameterType="int">
 		delete from f_shop_qna where sq_num = #{sq_num}
