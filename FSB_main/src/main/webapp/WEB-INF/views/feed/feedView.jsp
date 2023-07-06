@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 
-	<!-- 피드 상세보기 -->
+	<!-- 피드 상세보기 --><!-- 수정 -->
 		<!-- <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-white" style="width: 600px;"> -->
 			<div class="d-flex align-items-center flex-shrink-0 p-3 border-bottom container">
 				<div class="col-auto" align="left">
