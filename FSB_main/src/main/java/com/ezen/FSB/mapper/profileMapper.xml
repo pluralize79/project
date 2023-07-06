@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.ezen.FSB.mapper.profileMapper">
+	<!-- (임시) member 받아오기 -->
+	<select id="getMember" parameterType="int" resultType="memberDTO"> 
+ 		select * from f_member where mem_num=#{mem_num}
+ 	</select>
+	<!-- (임시)(옮기기) 다음 mem_num 받아오기 -->
+ 	<select id="getNextMemNum" resultType="int"> 
+ 		select f_member_seq.nextval from dual
+ 	</select>
+ 	<!-- (임시)(옮기기&수정) member 등록 -->
+ 	<insert id="insertMember" parameterType="memberDTO">
+ 		insert into f_member values(#{mem_num}, 'onetwo345@gmail.com', '5', '강다섯', '히히다섯', '5', '5', 0, '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5')
+	</insert>
+	
+	<!-- 받은 요청 리스트 -->
+	<select id="requestGotList" parameterType="int" resultType="profileDTO">
+		select * from f_profile inner join f_member on f_profile.mem_num = f_member.mem_num where f_member.mem_num in (select mem_num from f_friend where friend_num = #{mem_num} and friend_accept = 'request')
+ 	</select>
+ 	<!-- 보낸 요청 리스트 -->
+	<select id="requestSentList" parameterType="int" resultType="profileDTO"> 
+ 		select * from f_profile inner join f_member on f_profile.mem_num = f_member.mem_num where f_member.mem_num in (select friend_num from f_friend where mem_num = #{mem_num} and friend_accept = 'request')
+ 	</select>
+	
+	<!-- 닉네임 자동완성 (5개 까지만.)-->
+	<select id="getAutoNickname" parameterType="String" resultType="profileDTO"> 
+ 		<![CDATA[select * from (select * from f_profile inner join f_member on f_profile.mem_num = f_member.mem_num where prof_nickname_separated like '${value}%') where rowNum <= 5]]>
+ 	</select>
+	<!-- 프로필 추가 -->
+ 	<insert id="insertDefaultProfile" parameterType="profileDTO">
+ 		insert into f_profile values(#{mem_num}, #{prof_nickname_separated}, 'default_profile.png', null, 0, 0, 'open', default)
+	</insert>
+	<!-- 프로필 하나 가져오기 -->
+	<select id="getProfile" parameterType="int" resultType="profileDTO"> 
+ 		select * from f_profile where mem_num=#{mem_num}
+ 	</select>
+ 	<!-- 프로필 수정 -->
+ 	<update id="updateProfile" parameterType="Map">
+ 		update f_profile set prof_img=#{prof_img}, prof_msg=#{prof_msg}, prof_open=#{prof_open} where mem_num=#{mem_num}
+ 	</update>
+ 	
+	<!-- 팔로잉 가져오기 -->
+ 	<select id="getFollowing" parameterType="int" resultType="int">
+ 		select count(*) from f_friend where mem_num=#{value} and friend_accept='follow'
+ 	</select>
+ 	<!-- 팔로워 가져오기 -->
+ 	<select id="getFollower" parameterType="int" resultType="int">
+ 		select count(*) from f_friend where friend_num=#{value} and friend_accept='follow'
+ 	</select>
+ 	
+ 	<!-- 내 팔로우 상태 확인 -->
+ 	<select id="myFollowCheck" parameterType="Map" resultType="String">
+ 		select friend_accept from f_friend where mem_num = #{mem_num} and friend_num = #{friend_num} and friend_hide = 'show'
+ 	</select>
+ 	<!-- 친구의 팔로우 상태 확인 -->
+ 	<select id="friendFollowCheck" parameterType="Map" resultType="String">
+ 		select friend_accept from f_friend where mem_num = #{friend_num} and friend_num = #{mem_num} and friend_hide = 'show'
+ 	</select>
+ 	
+ 	<!-- 친구상태 인서트 -->
+ 	 <insert id="followNew" parameterType="Map">
+ 		insert into f_friend values(#{mem_num}, #{friend_num}, #{friend_accept}, default)
+	</insert>
+ 	<!-- 친구상태 업데이트 -->
+ 	<update id="followUpdate" parameterType="Map">
+ 		update f_friend set friend_accept=#{friend_accept} where mem_num=#{mem_num} and friend_num=#{friend_num}
+ 	</update>
+ 	<!-- 친구상태 삭제 -->
+ 	<update id="followDelete" parameterType="Map">
+ 		delete from f_friend where mem_num=#{mem_num} and friend_num=#{friend_num}
+ 	</update>
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.ezen.FSB.mapper.ShopMyPageMapper">
+ 	
+ 	<!-- 쇼핑몰 마이페이지 리뷰 리스트-->
+   	<select id="myPageReview" parameterType="map" resultType="ShopReviewDTO">
+		select * from (select rownum rn, A.* from (select * from f_shop_review inner join f_member on f_shop_review.mem_num = f_member.mem_num where f_shop_review.mem_num = #{mem_num})A) where rn between #{start} and #{end}
+	</select>
+ 	
+ 	<!-- 쇼핑몰 마이페이지 리뷰 개수 구하기(page num)  -->
+  	<select id="shopReviewCount" parameterType="int" resultType="int">
+ 		select count(*) from f_shop_review where mem_num = #{mem_num}
+ 	</select>
+ 	
+ 	<!-- 쇼핑몰 마이페이지 리뷰 삭제 -->
+ 	<delete id="deleteShopReview" parameterType="int">
+		delete from f_shop_review where sr_num = #{sr_num}
+ 	</delete>
+ 	
+ 	<!-- 쇼핑몰 마이페이지 리뷰 가져오기 -->
+ 	<select id="getMyPageReivew" parameterType="int" resultType="ShopReviewDTO">
+ 		select * from f_shop_review where sr_num = #{sr_num}
+ 	</select>
+ 	
+ 	<!-- 쇼핑몰 마이페이지 리뷰 수정 시 상품명 가져오기 (다시 시도하기)-->
+ 	<select id="getProdName" parameterType="int" resultType="shopReviewDTO">
+ 		select R.*, P.prod_num, p.prod_company, G.game_name from f_shop_review R left join f_product P on R.prod_num = P.prod_num left join f_game G on P.game_num = G.game_num where R.sr_num = #{sr_num}
+ 	</select>
+ 	
+ 	<!-- 쇼핑몰 마이페이지 리뷰 수정 -->
+ 	<update id="updateMyPageReivew" parameterType="ShopReviewDTO">
+ 		update f_shop_review set sr_starrating = #{sr_starrating}, sr_title = #{sr_title}, sr_content = #{sr_content}, sr_img1 = #{sr_img1}, sr_img2 = #{sr_img2}, sr_img3 = #{sr_img3}, sr_img4 = #{sr_img4} where sr_num = #{sr_num}
+ 	</update>	
+ 	
+ 	<!-- 쇼핑몰 마이페이지 상품문의 리스트 -->
+ 	<select id="myPageQnA" parameterType="int" resultType="ShopQnADTO">
+		select * from (select rownum rn, A.* from (select * from f_shop_qna inner join f_member on f_shop_qna.mem_num = f_member.mem_num where f_shop_qna.mem_num = #{mem_num})A) where rn between #{start} and #{end}
+	</select>
+	
+	<!-- 쇼핑몰 마이페이지 상품문의 개수 구하기(page num) -->
+	<select id="shopQnACount" parameterType="int" resultType="int">
+		select count(*) from f_shop_qna where mem_num = #{mem_num}
+	</select>
+	
+	<!-- 쇼핑몰 마이페이지 상품문의 가져오기 -->
+	<select id="getMyPageQnA" parameterType="int" resultType="ShopQnADTO">
+		select * from f_shop_qna where sq_num = #{sq_num}
+	</select>
+	
+	<!-- 쇼핑몰 마이페이지 상품문의 삭제 -->
+	 <delete id="deleteShopQnA" parameterType="int">
+		delete from f_shop_qna where sq_num = #{sq_num}
+ 	</delete>
+ 	
+ 	<!-- 전체 쿠폰 리스트 -->
+ 	<select id="couponList" resultType="ShopCouponDTO">
+ 		select * from f_scoupon
+ 	</select>
+ 	
+ 	<!-- 쿠폰 다운로드 (만료일이 지정 되어 있을 때)-->
+ 	<insert id="couponDownload" parameterType="map">
+		insert into f_user_scoupon values(f_usc_seq.nextval, #{mem_num}, #{sc_num}, sysdate, #{sc_duedate})
+	</insert>
+	
+	<!-- 쿠폰 다운로드 (만료일이 지정 되어 있지 않을 때)-->
+	<insert id="couponDownload2" parameterType="map">
+		insert into f_user_scoupon values(f_usc_seq.nextval, #{mem_num}, #{sc_num}, sysdate, sysdate+30)
+	</insert>
+	
+	<!-- 쇼핑몰 마이페이지 내 쿠폰 -->
+	<select id="myPageCoupon" parameterType="int" resultType="ShopUserCouponDTO">
+		select * from f_user_scoupon inner join f_scoupon on f_user_scoupon.sc_num = f_scoupon.sc_num where f_user_scoupon.mem_num = #{mem_num} order by usc_duedate
+	</select>
+	
+	<!-- 멤버 별 쿠폰 개수  -->
+	<select id="getCoupon" parameterType="int" resultType="int">
+		select count(*) from f_user_scoupon inner join f_scoupon on f_user_scoupon.sc_num = f_scoupon.sc_num where f_user_scoupon.mem_num = #{mem_num}
+	</select>
+ </mapper>

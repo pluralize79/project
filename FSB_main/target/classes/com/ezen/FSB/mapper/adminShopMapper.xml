@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.ezen.FSB.mapper.adminShopMapper">
+	
+	<!-- 상품 목록 -->
+	<select id="adminListProd" resultType="shopProductDTO">
+		select p.*, g.game_name, g.game_img from f_product p left join f_game g on p.game_num = g.game_num order by p.prod_num asc
+	</select>
+	<!-- 상품 정렬 -->
+	<select id="adminSortProd1" resultType="shopProductDTO">
+		select p.*, g.game_name, g.game_img from f_product p left join f_game g on p.game_num = g.game_num order by g.game_name asc
+	</select>
+	<select id="adminSortProd2" resultType="shopProductDTO">
+		select p.*, g.game_name, g.game_img from f_product p left join f_game g on p.game_num = g.game_num order by g.game_name desc
+	</select>
+	<select id="adminSortProd3" resultType="shopProductDTO">
+		select p.*, g.game_name, g.game_img from f_product p left join f_game g on p.game_num = g.game_num order by p.prod_price asc
+	</select>
+	<select id="adminSortProd4" resultType="shopProductDTO">
+		select p.*, g.game_name, g.game_img from f_product p left join f_game g on p.game_num = g.game_num order by p.prod_price desc
+	</select>
+	<select id="adminSortProd5" resultType="shopProductDTO">
+		select p.*, g.game_name, g.game_img from f_product p left join f_game g on p.game_num = g.game_num order by p.prod_discount asc
+	</select>
+	<select id="adminSortProd6" resultType="shopProductDTO">
+		select p.*, g.game_name, g.game_img from f_product p left join f_game g on p.game_num = g.game_num order by p.prod_discount desc
+	</select>
+	<select id="adminSortProd7" resultType="shopProductDTO">
+		select p.*, g.game_name, g.game_img from f_product p left join f_game g on p.game_num = g.game_num order by p.prod_regdate asc
+	</select>
+	<select id="adminSortProd8" resultType="shopProductDTO">
+		select p.*, g.game_name, g.game_img from f_product p left join f_game g on p.game_num = g.game_num order by p.prod_regdate desc
+	</select>
+	
+
+	<!-- 상품 상세보기 -->
+	<select id="adminGetProd" parameterType="int" resultType="shopProductDTO">
+		select p.*, g.game_name, g.game_img from f_product p left join f_game g on p.game_num = g.game_num where p.prod_num = #{prod_num}
+	</select>
+	<select id="adminGetProdReview" parameterType="int" resultType="shopReviewDTO">
+		select r.*, m.mem_nickname from f_shop_review r left join f_member m on r.mem_num = m.mem_num where r.prod_num = #{prod_num}
+	</select>
+	<select id="adminGetProdStar" parameterType="int" resultType="int">
+		select sum(sr_starrating) from f_shop_review where prod_num = #{prod_num}
+	</select>
+	<select id="adminGetProdReviewCount" parameterType="int" resultType="int">
+		select count(sr_num) from f_shop_review where prod_num = #{prod_num}
+	</select>
+	<!-- 상품 리뷰 꺼내기 -->
+	<select id="adminGetProdReviewImg" parameterType="int" resultType="shopReviewDTO">
+		select * from f_shop_review where sr_num = #{sr_num}
+	</select>
+	
+	<!-- 상품 등록 -->
+	<select id="adminNotProdGameList" resultType="gameDTO">
+		select g.* from f_game g left join f_product p on g.game_num = p.game_num where p.game_num IS NULL
+	</select> 
+	
+	<insert id="adminInsertProd" parameterType="shopProductDTO">
+		insert into f_product values(f_product_seq.nextval, #{game_num}, #{prod_img}, #{prod_qty}, 0, 0, #{prod_price}, #{prod_point}, #{prod_delchar}, #{prod_company}, sysdate, 0)
+	</insert>
+
+	<!-- 상품 수정 -->
+	<update id="adminUpdateProd" parameterType="shopProductDTO">
+		update f_product set prod_company = #{prod_company} , prod_qty = #{prod_qty}, prod_price = #{prod_price}, prod_point = #{prod_point}, prod_discount = #{prod_discount}, prod_delchar = #{prod_delchar}, prod_img = #{prod_img} where prod_num = #{prod_num}
+	</update>
+	
+	<!-- 상품 삭제 -->
+	<delete id="adminDeleteProd" parameterType="int">
+		delete from f_product where prod_num = #{prod_num}
+	</delete>
+	
+	<!-- 상품 찾기 // 게임 이름 -->
+	<select id="adminFindGameName" parameterType="String" resultType="shopProductDTO">
+		select p.*, g.game_name, g.game_img from f_product p inner join f_game g on g.game_num = p.game_num where g.game_name like '%'||#{searchString}||'%'
+	</select>
+	<!-- 상품 찾기 // 판매사 -->
+	<select id="adminFindProdCompany" parameterType="String" resultType="shopProductDTO">
+		select p.*, g.game_name, g.game_img from f_product p inner join f_game g on g.game_num = p.game_num where p.prod_company like '%'||#{searchString}||'%'
+	</select>
+	
+	<!-- shop 쿠폰 목록 -->
+	<select id="adminListScoupon" resultType="shopCouponDTO">
+		select * from f_scoupon
+	</select>
+	<!-- shop 쿠폰 등록 // 만료일 지정O-->
+	<insert id="adminInsertScoupon1" parameterType="shopCouponDTO">
+		insert into f_scoupon values(f_scoupon_seq.nextval, #{sc_name}, #{sc_type}, #{sc_discount}, sysdate, #{sc_duedate})
+	</insert>
+	<!-- shop 쿠폰 등록 // 만료일 지정X -->
+	<insert id="adminInsertScoupon2" parameterType="shopCouponDTO">
+		insert into f_scoupon values(f_scoupon_seq.nextval, #{sc_name}, #{sc_type}, #{sc_discount}, sysdate, NULL)
+	</insert>
+	<!-- sc_num 을 가지고 있는 사용자 목록 -->
+	<select id="adminListUsc" parameterType="int" resultType="ShopUserCouponDTO">
+		select u.*, m.mem_nickname from f_user_scoupon u left join f_member m on u.mem_num = m.mem_num where u.sc_num = #{sc_num}
+	</select>
+	<!-- shop 쿠폰 삭제 -->
+ 	<delete id="adminDeleteScoupon" parameterType="int">
+		delete from f_scoupon where sc_num = #{sc_num}
+	</delete>
+	
+	<!-- 쇼핑몰 문의 내역 -->
+	<select id="adminShopQnaList" resultType="ShopQnADTO">
+		select q.*, m.mem_nickname from f_shop_qna q left join f_member m on q.mem_num = m.mem_num order by sq_regdate asc
+	</select>
+	<!-- 쇼핑몰 문의 미처리 내역 -->
+	<select id="adminShopQnaListCheck" resultType="ShopQnADTO">
+		select q.*, m.mem_nickname from f_shop_qna q left join f_member m on q.mem_num = m.mem_num where q.sq_check = 0
+	</select>
+	<select id="adminShopQnaGet" parameterType="int" resultType="ShopQnADTO">
+		select q.*, m.mem_nickname from f_shop_qna q left join f_member m on q.mem_num = m.mem_num where sq_num = #{sq_num}
+	</select>
+	<!-- 쇼핑몰 문의 내역 답변 -->
+	<update id="adminShopQnaReply" parameterType="ShopQnADTO">
+		update f_shop_qna set sq_reply = #{sq_reply} where sq_num = #{sq_num}
+	</update>
+	<!-- 쇼핑몰 문의 내역 답변 NULL -->
+	<update id="adminShopQnaReplyDel" parameterType="int">
+		update f_shop_qna set sq_reply = NULL where sq_num = #{sq_num}
+	</update>
+	<!-- 쇼핑몰 문의 내역 답변 Check -->
+	<update id="adminShopQnaReplyCheck" parameterType="map">
+		update f_shop_qna set sq_check = #{check} where sq_num = #{sq_num}
+	</update>
+</mapper>

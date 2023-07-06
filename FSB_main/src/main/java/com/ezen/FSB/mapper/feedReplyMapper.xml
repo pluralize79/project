@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.ezen.FSB.mapper.feedReplyMapper">
+	<select id="listFeedReply" parameterType="int" resultType="feedReplyDTO"> 
+ 		select * from f_feedReply order by fr_re_group desc, fr_re_step asc where feed_num=#{feed_num}
+ 	</select>
+ 	<insert id="insertFeedReply" parameterType="feedReplyDTO">
+ 		insert into f_feedReply values(f_feedReply_seq.nextval, #{fr_re_group}, #{fr_re_step}, #{fr_re_level}, #{feed_num}, #{mem_num}, #{fr_content}, 0, sysdate, #{fr_open}, default)
+	</insert>
+ 	<select id="getFeedReply" parameterType="int" resultType="feedReplyDTO">
+ 		select * from f_feedReply where fr_num = #{fr_num}
+ 	</select>
+ 	<delete id="deleteFeedReply" parameterType="int">
+ 		delete from f_feedReply where fr_num = #{fr_num}
+ 	</delete>
+ 	<update id="updateFeedReply" parameterType="feedReplyDTO">
+ 		update f_feedReply set fr_content=#{fr_content}, fr_open=#{fr_open} where fr_num=#{fr_num}
+ 	</update>
+ 	<update id="updateReportFeed" parameterType="Map">
+ 		update f_feed set feed_report=#{feed_report} where feed_num=#{feed_num}
+ 	</update>
+</mapper>

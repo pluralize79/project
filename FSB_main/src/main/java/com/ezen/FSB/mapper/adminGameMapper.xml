@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.ezen.FSB.mapper.adminGameMapper">
+
+	<!-- 보드게임 -->
+	<select id="adminListGame" resultType="gameDTO">
+		select * from f_game order by game_num desc
+	</select>
+	<insert id="adminInsertGame" parameterType="gameDTO">
+		insert into f_game values(#{game_num}, #{game_img}, #{game_name}, #{game_player}, #{game_playTime}, #{game_level}, #{game_content}, 0, 0)
+	</insert>
+	
+	<select id="adminMaxGameNum" resultType="int">
+		select f_game_seq.nextval from dual
+	</select>
+	
+	<delete id="adminDeleteGame" parameterType="int">
+		delete from f_game where game_num=#{game_num}
+	</delete>
+	
+	<update id="adminUpdateGame" parameterType="gameDTO">
+		update f_game set game_img=#{game_img}, game_name=#{game_name}, game_player=#{game_player}, game_playTime=#{game_playTime},
+			game_level=#{game_level}, game_content=#{game_content} where game_num=#{game_num}
+	</update>
+	
+	<!-- 보드게임 상세보기 -->
+	<select id="adminGetGame" resultType="gameDTO">
+		select * from f_game where game_num=#{game_num}
+	</select>
+	
+	<select id="adminGetGameTagList" parameterType="int" resultType="tagDTO">
+		select * from f_tag where game_num = #{game_num}
+	</select>
+	
+	<!-- 보드게임 한줄평 -->
+	<select id="adminGetGameReview" parameterType="int" resultType="reviewDTO">
+		select r.*, m.mem_nickname from f_review r left join f_member m on r.mem_num = m.mem_num where game_num = #{game_num} order by review_num asc
+	</select>
+	
+	<select id="adminGetGameReviewReport" parameterType="int" resultType="reviewDTO">
+		select r.*, m.mem_nickname from f_review r left join f_member m on r.mem_num = m.mem_num where game_num = #{game_num} and not review_report = 0 order by review_num asc
+	</select>
+	<!-- 보드게임 한줄평 리뷰 수 -->
+	<select id="adminGetGameReviewCount" parameterType="int" resultType="int">
+		select count(review_starrating) from f_review where game_num = #{game_num}
+	</select>
+	<!-- 보드게임 한줄평 별점 합 -->
+	<select id="adminGetGameReviewStar" parameterType="int" resultType="int">
+		select sum(review_starrating) from f_review where game_num = #{game_num}
+	</select>
+	
+	
+	<!--  보드게임 한줄평 삭제 -->
+	<delete id="adminDeleteGameReview" parameterType="int">
+		delete from f_review where review_num = #{review_num}
+	</delete>
+	<!--  보드게임 삭제 시, 한줄평 같이 삭제 -->
+	<delete id="adminDeleteGameReview2" parameterType="int">
+		delete from f_review where game_num = #{game_num}
+	</delete>
+	
+	<!-- 보드게임 찾기 -->
+	<select id="adminFindGame" resultType="gameDTO" parameterType="map">
+		select * from f_game where ${search} like '%'||#{searchString}||'%'
+	</select>
+	
+	<!-- 보드게임 등록 시, 태그 등록 & 보드게임 수정 시, 재 등록-->
+	<insert id="adminInsertGameTag" parameterType="tagDTO">
+		insert into f_tag values(#{game_num}, 0, #{theme_num})
+	</insert>
+	<!-- 보드게임 수정/삭제 시, game_num 으로 등록된 태그 모두 삭제 -->
+	<delete id="adminDeleteGameTag" parameterType="int">
+		delete from f_tag where game_num=#{game_num}
+	</delete>
+
+	<!-- 테마 -->
+	<select id="adminThemeList" resultType="themeDTO">
+		select * from f_theme order by theme_num asc
+	</select>
+	<select id="adminMaxThemeNum" resultType="int">
+		select max(theme_num) from f_theme
+	</select>
+	
+	<select id="adminFindThemeGame" parameterType="int" resultType="gameDTO">
+		select * from f_game inner join f_tag on f_game.game_num = f_tag.game_num where f_tag.theme_num = #{theme_num}
+	</select>
+	
+	<select id="adminGetTheme" parameterType="int" resultType="themeDTO">
+		select * from f_theme where theme_num = #{theme_num}
+	</select>
+	
+	<!-- 테마 수정 -->
+	<update id="adminUpdateTheme" parameterType="themeDTO">
+		update f_theme set theme_name = #{theme_name} where theme_num = #{theme_num}
+	</update>
+	<!-- 테마 등록 -->
+	<insert id="adminInsertTheme" parameterType="String">
+		insert into f_theme values(f_theme_seq.nextval, #{theme_name})
+	</insert>
+	<!-- 테마 삭제 -->
+	<delete id="adminDeleteTheme" parameterType="int">
+		delete from f_theme where theme_num = #{theme_num}
+	</delete>
+	<delete id="adminDeleteThemeTag" parameterType="int">
+		delete from f_tag where theme_num = #{theme_num}
+	</delete>
+	
+	<select id="adminListThemeTag" parameterType="int" resultType="tagDTO">
+		select * from f_tag where theme_num = #{theme_num}
+	</select>
+
+	<!-- 보드게임 한줄평 신고내역 -->
+	<select id="adminListReviewReport" resultType="reviewDTO">
+		select r.*, m.mem_nickname from f_review r left join f_member m on r.mem_num = m.mem_num where not review_report ='0'
+	</select>
+	<select id="adminReviewReportCount" resultType="int">
+		select count(*) from f_review;
+	</select>
+	
+	<!-- 보드게임 한줄평 신고내역 / 정렬 -->
+	<select id="adminListReviewReport1" resultType="reviewDTO">
+		select r.*, m.mem_nickname from f_review r left join f_member m on r.mem_num = m.mem_num where not review_report='0' order by game_num asc
+	</select>
+	<select id="adminListReviewReport2" resultType="reviewDTO">
+		select r.*, m.mem_nickname from f_review r left join f_member m on r.mem_num = m.mem_num where not review_report='0' order by game_num desc
+	</select>
+	<select id="adminListReviewReport3" resultType="reviewDTO">
+		select r.*, m.mem_nickname from f_review r left join f_member m on r.mem_num = m.mem_num where not review_report='0' order by review_regdate asc
+	</select>
+	<select id="adminListReviewReport4" resultType="reviewDTO">
+		select r.*, m.mem_nickname from f_review r left join f_member m on r.mem_num = m.mem_num where not review_report='0' order by review_regdate desc
+	</select>
+	
+	<!-- 보드게임 한줄평 신고내역 / 찾기 -->
+	<select id="adminFindReviewReport" parameterType="map" resultType="reviewDTO">
+		select r.*, m.mem_nickname from f_review r left join f_member m on r.mem_num = m.mem_num where not review_report='0' and m.mem_nickname like '%'||#{searchString}||'%'
+	</select>
+	
+	<!-- 보드게임 한줄평 신고내역 / 신고 취소 -->
+	<update id="adminUpdateReviewReport" parameterType="int">
+		update f_review set review_report='0' where review_num = #{review_num}
+	</update>
+
+</mapper>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.ezen.FSB.mapper.adminMemberMapper">
+
+	<!-- 일반 회원 목록 -->
+	<select id="adminListMember" resultType="memberDTO">
+		select * from f_member order by mem_num desc
+	</select>
+	
+	<!-- 일반 회원 등록 -->
+	<insert id="adminInsertMember" parameterType="memberDTO">
+		insert into f_member (mem_num, mem_id, mem_passwd, mem_name, mem_nickname, mem_mode, mem_regdate, mem_report, mem_hp1, mem_hp2, mem_hp3)
+		values (#{mem_num}, #{mem_id}, #{mem_passwd}, #{mem_name}, #{mem_nickname}, #{mem_mode}, sysdate, 0, #{mem_hp1}, #{mem_hp2}, #{mem_hp3})
+	</insert>
+	
+	<!-- 일반 회원 상세보기 -->
+	<select id="adminGetMember" parameterType="int" resultType="memberDTO">
+		select * from f_member where mem_num = #{mem_num}
+	</select>
+	
+	<!-- 일반 회원 찾기 -->
+	<select id="adminFindMember" parameterType="map" resultType="memberDTO">
+		select * from f_member where ${search} like '%'||#{searchString}||'%'
+	</select>
+	
+	<!-- 일반 회원 삭제 -->
+	<delete id="adminDeleteMember" parameterType="int">
+		delete from f_member where mem_num = #{mem_num}
+	</delete>
+	
+	<!-- 일반 회원 수정 // 비밀번호 수정 -->
+	<update id="adminUpdateMemberPasswd" parameterType="int">
+		update f_member set mem_passwd='123456789' where mem_num=#{mem_num}
+	</update>
+	
+	<!-- 일반 회원 수정 // 닉네임 수정 -->
+	<update id="adminUpdateMemberNickname" parameterType="int">
+		update f_member set mem_nickname='0' where mem_num=#{mem_num}
+	</update>
+	
+	<!-- 일반 회원 수정 // 프로필 수정 -->
+	<update id="adminUpdateMemberImg" parameterType="int">
+		update f_member set mem_img = NULL where mem_num=#{mem_num}
+	</update>
+	
+	<!-- 일반 회원 수정 // 신고횟수 수정 -->
+	<update id="adminUpdateMemberReport" parameterType="int">
+		update f_member set mem_report=0 where mem_num=#{mem_num}
+	</update>
+	
+	<!-- 일반 회원 수정 // 상태메세지 수정 -->
+	<update id="adminUpdateMemberMsg" parameterType="int">
+		update f_member set mem_msg = NULL where mem_num=#{mem_num}
+	</update>
+	
+</mapper>

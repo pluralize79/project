@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.ezen.FSB.mapper.adminNoticeMapper">
+
+	<!-- 관리자 작성글 등록 -->
+	<insert id="adminInsertNotice" parameterType="noticeDTO">
+		insert into f_notice values(f_notice_seq.nextval, #{n_mode}, #{n_title}, #{n_content}, sysdate)
+	</insert>
+
+	<!-- 관리자 작성글 목록 -->
+	<select id="adminListNotice" resultType="noticeDTO">
+		select * from f_notice
+	</select>
+	
+	<!-- 관리자 작성글 정렬 -->
+	<select id="adminListNoticeSort1" parameterType="String" resultType="noticeDTO">
+		select * from f_notice where n_mode = #{n_mode}
+	</select>
+	<select id="adminListNoticeSort2" resultType="noticeDTO">
+		select * from f_notice order by n_regdate asc
+	</select>
+	<select id="adminListNoticeSort3" resultType="noticeDTO">
+		select * from f_notice order by n_regdate desc
+	</select>
+	
+	<!-- 관리자 작성글 찾기 -->
+	<select id="adminFindNotice" parameterType="map" resultType="noticeDTO">
+		select * from f_notice where ${search} like '%'||#{searchString}||'%'
+	</select>
+	
+	<!-- 관리자 작성글 삭제 -->
+	<delete id="adminDeleteNotice" parameterType="int">
+		delete from f_notice where n_num = #{n_num}
+	</delete>
+	
+	<!-- 해당 관리자 작성글 꺼내기 -->
+	<select id="adminGetNotice" parameterType="int" resultType="noticeDTO">
+		select * from f_notice where n_num = #{n_num}
+	</select>
+	
+	<!-- 관리자 작성글 수정 -->
+	<update id="adminUpdateNotice" parameterType="noticeDTO">
+		update f_notice set n_mode = #{n_mode} , n_title = #{n_title}, n_content = #{n_content} where n_num = #{n_num}
+	</update>
+	
+</mapper>

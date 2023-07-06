@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.ezen.FSB.mapper.gameMapper">
+ <!-- 게임 목록 -->
+ 	<select id="listGame" resultType="GameDTO">
+ 		select * from f_game
+ 	</select>
+ 	
+ 	<!-- 검색으로 게임 찾기 -->
+ 	<select id="findGame" parameterType="String" resultType="GameDTO">
+  		select * from f_game where game_name like '%'||#{searchString}||'%' 	
+ 	</select>
+ 	
+ 	<!-- 상세보기 클릭으로 게임 찾기 (테마별) -->
+ 	<select id="checkListGame1" parameterType="int" resultType="GameDTO">
+ 		select * from f_game inner join f_tag on f_game.game_num = f_tag.game_num where f_tag.theme_num = #{theme_num}
+ 	</select>
+ 	
+ 	<!-- 상세보기 클릭으로 게임 찾기 (인원별) -->
+ 	<select id="checkListGame2" parameterType="int" resultType="GameDTO">
+ 		select * from f_game where game_player = #{game_player}
+ 	</select>
+ 	
+ 	<!-- 상세보기 클릭으로 게임 찾기 (별점별) -->
+ 	<select id="checkListGame3" parameterType="int" resultType="GameDTO">
+ 		select * from f_game where game_level = #{game_level}
+ 	</select>
+ 	
+	<!-- 게임 찾기(이름 순) -->
+ 	<select id="sortGame1" parameterType="String" resultType="GameDTO">
+ 		select * from f_game order by game_name asc
+ 	</select>
+ 	
+ 	<!-- 게임 찾기(인원 순) -->
+ 	<select id="sortGame2" parameterType="String" resultType="GameDTO">
+ 		select * from f_game order by game_player asc
+ 	</select>
+ 	
+ 	<!-- 게임 찾기(별점 순) -->
+ 	<select id="sortGame3" parameterType="int" resultType="GameDTO">
+ 		select * from f_game order by game_starrating asc
+ 	</select>
+ 	
+ 	<!-- 게임 찾기(좋아요 순) -->
+ 	<select id="sortGame4" parameterType="int" resultType="GameDTO">
+		select * from f_game order by game_likeCount desc
+	</select>
+
+ 	<!-- 게임 상세보기 -->
+ 	<select id ="getGame" parameterType="int" resultType="GameDTO">
+ 		select * from f_game where game_num = #{game_num}
+ 	</select>
+ 	
+ 	<!-- 게임 상세보기에서의 한줄평 별점 평균 -->
+ 	<select id="reviewAvg" parameterType="int" resultType="int">
+<!--   	select avg(review_starrating) from f_review inner join f_game on f_review.game_num = f_game.game_num where f_game.game_num = #{game_num}
+ --> 	
+  		select trunc(avg(review_starrating)) as avg from f_review inner join f_game on f_review.game_num = f_game.game_num where f_game.game_num = #{game_num}
+ 	</select>
+ 	
+	<!-- 게임 상세보기에서 태그 가져오기 -->
+ 	<select id="gameTag" parameterType="int" resultType="TagDTO">
+ 		select * from f_tag where game_num = #{game_num}
+ 	</select>
+ 	
+ 	<!-- 한줄평 등록 -->
+ 	<insert id="insertReview" parameterType="ReviewDTO">
+ 		insert into f_review values(f_review_seq.nextval, #{game_num}, #{mem_num}, #{review_starrating}, #{review_content}, 0, sysdate)
+ 	</insert>
+ 	
+ 	<!-- 한줄평 목록 -->
+ 	<select id="listReview" parameterType="map" resultType="ReviewDTO">
+<!--  		select * from (select rownum as rn, f_review.* from f_review order by review_starrating) where rn between #{start} and #{end}
+--> 
+		select v.*, m.mem_nickname from (select rownum rn, A.* from (select * from f_review inner join f_game on f_review.game_num = f_game.game_num where f_review.game_num = #{game_num})A) v left join f_member m on v.mem_num = m.mem_num where rn between #{start} and #{end}		
+
+<!-- 		select * from (select rownum rn, A.* from (select * from f_review order by review_starrating desc)A) where rn between #{start} and #{end}		
+ -->
+<!--  	select *, A.* from (select * from f_review order by review_starrating)A where rownum between #{start} and #{end}
+ --> 		<!-- select * from (select rownum as rn, f_review.* from f_review) where rn between #{start} and #{end} -->
+<!-- 		select * from (select rownum rn, A.* from (select * from f_board order by board_re_group desc, board_re_step asc)A) where rn between #{start} and #{end} 	
+ --></select>
+ 
+ 	<!-- 한줄평 목록(최신 순) -->
+ 	<select id="sortReview1" parameterType="map" resultType="ReviewDTO">
+ 		select v.*, m.mem_nickname from (select rownum rn, A.* from (select * from f_review inner join f_game on f_review.game_num = f_game.game_num where f_review.game_num = #{game_num})A) v left join f_member m on v.mem_num = m.mem_num where rn between #{start} and #{end} order by review_regdate desc 
+ 	</select>
+ 	
+ 	<!-- 한줄평 목록(오래된 순) -->
+ 	<select id="sortReview2" parameterType="map" resultType="ReviewDTO">
+ 		select v.*, m.mem_nickname from (select rownum rn, A.* from (select * from f_review inner join f_game on f_review.game_num = f_game.game_num where f_review.game_num = #{game_num})A) v left join f_member m on v.mem_num = m.mem_num where rn between #{start} and #{end} order by review_regdate asc
+ 	</select>
+ 
+ 	<!-- 한줄평 목록 (별점 높은 순) -->
+ 	<select id="sortReview3" parameterType="map" resultType="ReviewDTO">
+ 		select v.*, m.mem_nickname from (select rownum rn, A.* from (select * from f_review inner join f_game on f_review.game_num = f_game.game_num where f_review.game_num = #{game_num})A) v left join f_member m on v.mem_num = m.mem_num where rn between #{start} and #{end} order by review_starrating desc
+ 	</select>
+ 
+ 	<!-- 한줄평 목록 (별점 낮은 순) -->
+ 	<select id="sortReview4" parameterType="map" resultType="ReviewDTO">
+ 		select v.*, m.mem_nickname from (select rownum rn, A.* from (select * from f_review inner join f_game on f_review.game_num = f_game.game_num where f_review.game_num = #{game_num})A) v left join f_member m on v.mem_num = m.mem_num where rn between #{start} and #{end} order by review_starrating asc
+ 	</select>
+ 	
+ 	<!-- 한줄평 개수 구하기(page num, 한줄평 평점 시 사용) -->
+ 	<select id="getCount" parameterType="int" resultType="int">
+ 		select count(*) from f_review where game_num = #{game_num}
+ 	</select>
+ 	
+ 	<!-- 한줄평 삭제 -->
+ 	<delete id="deleteReview" parameterType="int">
+ 		delete from f_review where review_num = #{review_num}
+ 	</delete>
+ 	
+ 	<!-- 한줄평 신고기능에 사용할 쿼리문 -->
+ 	<insert id="GameReviewReport" parameterType="ReportDTO">
+ 		insert into f_report values(f_report_seq.nextval, #{mem_num}, #{report_target}, #{report_mode}, #{report_content}, sysdate, 0, #{report_detail})
+ 	</insert>
+ 	
+ 	<!-- 신고를 눌렀을 때 +1 증가 -->
+ 	<update id="updateReviewReport" parameterType="ReviewDTO">
+ 		update f_review set review_report = review_report+1 where review_num = #{review_num}
+ 	</update>
+ 	
+ 	<!-- 좋아요를 누른 회원인지 아닌지 구분하기 위한 쿼리문 -->
+ 	<select id="likeCheckMem" parameterType="map" resultType="GameLikeDTO">
+ 		select * from f_game_like where game_num = #{game_num} and mem_num = #{mem_num}
+ 	</select>
+ 	
+ 	<!-- 게임 좋아요 클릭 시 -->
+ 	<insert id="gameLike" parameterType="GameLikeDTO">
+ 		insert into f_game_like values(f_game_like_seq.nextval, #{game_num}, #{mem_num})
+ 	</insert>
+ 	
+ 	<!-- 게임 좋아요 총 개수 -->
+ 	<select id="gameLikeCount" parameterType="int" resultType="int">
+ 		select count(*) from f_game_like where game_num = #{game_num}
+ 	</select>
+ 	
+ 	<!-- 게임 좋아요 누른거 해제 -->
+ 	<delete id="gameLikeDelete" parameterType="map">
+ 		delete from f_game_like where mem_num = #{mem_num} and game_num = #{game_num}
+ 	</delete>
+ 	
+ 	<!-- 게임 좋아요 정렬 시키기 위한 update -->
+ 	<update id="gameLikeUpdate" parameterType="map">
+ 		update f_game set game_likeCount = #{game_likeCount} where game_num = #{game_num}
+ 	</update>
+ </mapper>

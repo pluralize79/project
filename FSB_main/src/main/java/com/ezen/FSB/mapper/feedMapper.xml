@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.ezen.FSB.mapper.feedMapper">
+	<!-- 메인 타임라인 불러오기 -->
+	<select id="getTimeline" parameterType="int" resultType="feedDTO"> 
+		select * 
+ 		from f_feed 
+ 					inner join f_friend on f_feed.mem_num = f_friend.friend_num 
+ 					inner join f_profile on f_feed.mem_num = f_profile.mem_num 
+ 					inner join f_member on f_feed.mem_num = f_member.mem_num 
+ 		where (f_friend.mem_num = #{value} and f_friend.friend_accept = 'follow') or f_feed.mem_num = #{value}
+ 		order by f_feed.feed_regdate desc
+ 	</select>
+ 	<!-- 피드 임시 목록 불러오기 -->
+ 	<select id="listTempFeed" resultType="feedDTO">
+ 		select * from f_feed order by feed_num desc where feed_open='temp'
+ 	</select>
+ 	<!-- 피드 등록 (비즈니스 프로필 유) -->
+ 	<insert id="insertFeed" parameterType="feedDTO">
+ 		insert into f_feed values(#{feed_num}, #{mem_num}, #{bp_num}, #{feed_content}, #{feed_img1, jdbcType=VARCHAR}, #{feed_img2, jdbcType=VARCHAR}, #{feed_img3, jdbcType=VARCHAR}, #{feed_img4, jdbcType=VARCHAR}, 0, 0, sysdate, #{feed_open}, default)
+ 	</insert>
+ 	<!-- 피드 등록 (비즈니스 프로필 무) -->
+ 	<insert id="insertFeed_noBP" parameterType="feedDTO">
+ 		insert into f_feed (feed_num, mem_num, feed_content, feed_img1, feed_img2, feed_img3, feed_img4, feed_like, feed_report, feed_regdate, feed_open, feed_hide) values(#{feed_num}, #{mem_num}, #{feed_content}, #{feed_img1, jdbcType=VARCHAR}, #{feed_img2, jdbcType=VARCHAR}, #{feed_img3, jdbcType=VARCHAR}, #{feed_img4, jdbcType=VARCHAR}, 0, 0, sysdate, #{feed_open}, default)
+ 	</insert>
+ 	<!-- 피드 하나 가져오기 -->
+ 	<select id="getFeed" parameterType="int" resultType="feedDTO">
+ 		select * 
+ 		from f_feed 
+ 					inner join f_profile on f_feed.mem_num = f_profile.mem_num 
+ 					inner join f_member on f_feed.mem_num = f_member.mem_num 
+ 		where feed_num = #{feed_num}
+ 	</select>
+ 	<!-- 피드 하나 삭제 -->
+ 	<delete id="deleteFeed" parameterType="int">
+ 		delete from f_feed where feed_num = #{feed_num}
+ 	</delete>
+ 	<!-- 피드 수정 -->
+ 	<update id="updateFeed" parameterType="feedDTO">
+ 		update f_feed set bp_num=#{bp_num}, feed_content=#{feed_content}, feed_img1=#{feed_img1}, feed_img2=#{feed_img2}, feed_img3=#{feed_img3}, feed_img4=#{feed_img4}, feed_open=#{feed_open} where feed_num=#{feed_num}
+ 	</update>
+ 	<update id="updateReportFeed" parameterType="Map">
+ 		update f_feed set feed_report=#{feed_report} where feed_num=#{feed_num}
+ 	</update>
+ 	<update id="addLikeFeed" parameterType="int">
+ 		update f_feed set feed_like=feed_like+1 where feed_num=#{feed_num}
+ 	</update>
+ 	<update id="removeLikeFeed" parameterType="int">
+ 		update f_feed set feed_like=feed_like-1 where feed_num=#{feed_num}
+ 	</update>
+ 	<!-- 다음 feed_num 값 받아오기 -->
+ 	<select id="getNextFeedNum" resultType="int"> 
+ 		select f_feed_seq.nextval from dual
+ 	</select>
+ 	<select id="getFeedTheme" resultType="String"> 
+ 		select theme_name f_feed_theme inner join f_theme on f_feed_theme.theme_num = f_theme.theme_num where feed_num = #{feed_num}
+ 	</select>
+ 	<insert id="insertFeedTheme" parameterType="feed_themeDTO">
+ 		insert into f_feed_theme values(#{feed_num}, #{theme_num}, default)
+ 	</insert>
+ 	<delete id="deleteFeedTheme" parameterType="int">
+ 		delete * from f_feed_theme where feed_num = #{feed_num}
+ 	</delete>
+</mapper>

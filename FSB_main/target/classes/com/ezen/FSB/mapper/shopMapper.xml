@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ezen.FSB.mapper.shopMapper">
+		<!-- 전체 상품 목록 -->
+	<select id="listProd" resultType="ShopProductDTO">
+		  select p.*, g.game_name, g.game_img from f_product p left join f_game g on p.game_num = g.game_num
+	</select>
+	<!-- 상품 찾기(이름순/판매순/인기순/최신순) -->
+ 	<select id="sortProd1" parameterType="String" resultType="ShopProductDTO">
+ 		select p.*, g.game_name, g.game_img from f_product p left join f_game g on p.game_num = g.game_num order by g.game_name asc
+ 	</select>
+ 	<select id="sortProd2" parameterType="String" resultType="ShopProductDTO">
+ 		select * from f_product order by prod_regdate asc
+ 	</select>
+ 	<select id="sortProd3" parameterType="String" resultType="ShopProductDTO">
+ 		select * from f_product order by prod_regdate asc
+ 	</select>
+ 	<select id="sortProd4" parameterType="String" resultType="ShopProductDTO">
+ 		select p.*, g.game_name, g.game_img from f_product p left join f_game g on p.game_num = g.game_num order by p.prod_regdate asc
+ 	</select>
+ 	<!-- 메인페이지 상품 검색(game_name, prod_company, 추가해야하나????? -->
+ 	<select id="findProd" parameterType="map" resultType="ShopProductDTO">
+ 		select p.*, g.game_name, g.game_img from f_product p inner join f_game g on p.game_num = g.game_num where g.game_name like '%'||#{searchString}||'%' or p.prod_company like '%'||#{searchString}||'%'
+ 	</select>
+ 	<!-- 상품 상세페이지 -->
+	<select id="getProd" parameterType="int" resultType="ShopProductDTO">
+		select p.*, g.game_name, g.game_img, g.game_content from f_product p left join f_game g on p.game_num = g.game_num where p.prod_num = #{prod_num}
+	</select>
+	<insert id="prodinsertLike" parameterType="ShopLikeDTO">
+		insert into f_shop_like values(f_shop_like_seq.nextval, #{prod_num}, #{mem_num})
+	</insert>
+	<insert id="shopinsertReview" parameterType="ShopReviewDTO">														<!-- null 들어가도 오류 나지않음!! -->
+		insert into f_shop_review values(f_shop_review_seq.nextval, #{prod_num}, #{mem_num}, #{game_num}, #{sr_starrating}, #{sr_img1, jdbcType=VARCHAR}, #{sr_img2, jdbcType=VARCHAR}, #{sr_img3, jdbcType=VARCHAR}, #{sr_img4, jdbcType=VARCHAR}, #{sr_title}, #{sr_content}, sysdate)
+	</insert>
+	<select id="shoplistReview" resultType="ShopReviewDTO">
+		select r.*, p.prod_num from f_shop_review r left join f_product p on r.prod_num = p.prod_num
+	</select>
+	<!-- 상품상세 별점 평균 trunc(소수점빼주는),avg(평균내주는)-->
+	<select id="shopReviewAvg" parameterType="int" resultType="int">
+		select trunc(avg(sr_starrating)) as avg from f_shop_review inner join f_product on f_shop_review.prod_num = f_product.prod_num where f_product.prod_num = #{prod_num}
+	</select>
+	<!-- 상품상세 리뷰 개수 및 페이지번호 -->
+  	<select id="shopviewReviewCount" parameterType="int" resultType="int">
+ 		select count(*) from f_shop_review where prod_num = #{prod_num}
+ 	</select>	
+	<!-- 상품상세에서 리뷰 꺼내기 : 페이징처리 할 rn/회원닉네임을 가져오기위해 m inner join해줌/sr_num 내림차순 -->
+	<select id="shopgetViewReview" parameterType="map" resultType="ShopReviewDTO">																											<!-- 최신글이 1페이지 맨위에 오도록 내림차순 54321  -->
+		select * from (select rownum rn, A.* from 
+			(select r.*, m.mem_nickname from f_shop_review r 
+				inner join f_product p on r.prod_num = p.prod_num 
+				inner join f_member m on r.mem_num = m.mem_num
+			where r.prod_num = #{prod_num} order by sr_num desc)A)
+		where rn between #{start} and #{end}
+	</select>	
+	<!-- 수정폼에서 리뷰 꺼내기 -->
+	<select id="shopgetReview" parameterType="int" resultType="ShopReviewDTO">
+		select R.*, P.prod_num, p.prod_company, G.game_name from f_shop_review R left join f_product P on R.prod_num = P.prod_num left join f_game G on P.game_num = G.game_num where R.sr_num = #{sr_num}
+	</select>
+	<delete id="shopdeleteReview" parameterType="int">
+		delete from f_shop_review where sr_num = #{sr_num}
+	</delete>
+	<update id="shopupdateReview" parameterType="ShopReviewDTO">
+		update f_shop_review set sr_starrating = #{sr_starrating}, sr_img1 = #{sr_img1}, sr_title = #{sr_title}, sr_content = #{sr_content} where sr_num = #{sr_num}
+	</update>
+	<insert id="shopinsertQnA" parameterType="ShopQnADTO">														<!-- null 들어가도 오류 나지않음!! -->
+		insert into f_shop_qna values(f_shop_qna_seq.nextval, #{prod_num}, #{mem_num}, #{sq_type}, #{sq_img1, jdbcType=VARCHAR}, #{sq_img2, jdbcType=VARCHAR}, #{sq_img3, jdbcType=VARCHAR}, #{sq_img4, jdbcType=VARCHAR}, #{sq_title}, #{sq_content}, #{sq_passwd}, sysdate, 0, #{sq_secret}, 0)
+	</insert>
+	<delete id="shopdeleteQnA" parameterType="int">
+		delete from f_shop_qna where sq_num = #{sq_num}
+	</delete>
+	<!-- 상품 문의 전체목록(관리자 필요할듯) -->
+	<select id="shoplistQnA" resultType="ShopQnADTO">
+		select q.*, p.prod_num from f_shop_qna q left join f_product p on q.prod_num = p.prod_num
+	</select>
+	<!-- 상품상세 문의페이지번호 -->
+  	<select id="shopviewQnACount" parameterType="int" resultType="int">
+ 		select count(*) from f_shop_qna where prod_num = #{prod_num}
+ 	</select>	
+	<!-- 상품상세에서 문의글 꺼내기  : 페이징처리 할 rn/회원닉네임을 가져오기위해 m inner join해줌/sr_num 내림차순 -->
+	<select id="shopgetViewQnA" parameterType="map" resultType="ShopQnADTO">																											<!-- 최신글이 1페이지 맨위에 오도록 내림차순 54321  -->
+		select * from (select rownum rn, A.* from 
+			(select q.*, m.mem_nickname from f_shop_qna q 
+				inner join f_product p on q.prod_num = p.prod_num 
+				inner join f_member m on q.mem_num = m.mem_num
+			where q.prod_num = #{prod_num} order by sq_num desc)A)
+		where rn between #{start} and #{end}
+	</select>
+	<!-- 상품 장바구니 등록 -->
+	<insert id="shopInsertCart" parameterType="ShopCartDTO">
+		insert into f_cart values(f_cart_seq.nextval, #{mem_num}, #{game_num}, #{prod_num}, #{cart_qty})
+	</insert>
+	<update id="shopUpdateCart" parameterType="ShopCartDTO">
+		update f_cart set cart_qty = #{cart_qty} where cart_num = #{cart_num}
+	</update>
+	<delete id="shopDeleteCart" parameterType="int">
+		delete from f_cart where cart_num = #{cart_num}
+	</delete>
+	<!-- 상품 장바구니 목록 -->
+	<select id="shopListCart" resultType="ShopCartDTO">
+		select c.*, p.prod_company, p.prod_point, p.prod_price, p.prod_delchar, p.prod_discount, g.game_name from f_cart c left join f_product p on c.prod_num = p.prod_num left join f_game g on p.game_num = g.game_num order by c.cart_num asc
+	</select>
+	<!-- 상품 장바구니 개수 -->
+  	<select id="shopCartCount" parameterType="int" resultType="int">
+ 		select count(*) from f_cart
+ 	</select>
+</mapper>

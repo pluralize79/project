@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.ezen.FSB.mapper.adminBoardMapper">
+
+	<!-- 게시판 공지글 목록 -->
+	<select id="adminListBNotice" resultType="noticeDTO">
+		select * from f_notice where n_mode = 'free' or n_mode = 'anony' or n_mode = 'secondhand' or n_mode = 'all'
+	</select>
+	
+	<!-- 게시판 공지글 정렬 -->
+	<select id="adminSortBNoticeAll" resultType="noticeDTO">
+		select * from f_notice where n_mode = 'all'
+	</select>
+	<select id="adminSortBNoticeFree" resultType="noticeDTO">
+		select * from f_notice where n_mode = 'free'
+	</select>
+	<select id="adminSortBNoticeAnony" resultType="noticeDTO">
+		select * from f_notice where n_mode = 'anony'
+	</select>
+	<select id="adminSortBNoticeSH" resultType="noticeDTO">
+		select * from f_notice where n_mode = 'secondhand'
+	</select>
+	<select id="adminSortBNoticeRegAsc" resultType="noticeDTO">
+		select * from f_notice where n_mode = 'free' or n_mode = 'anony' or n_mode = 'secondhand' or n_mode = 'all' order by n_regdate asc
+	</select>
+	<select id="adminSortBNoticeRegDesc" resultType="noticeDTO">
+		select * from f_notice where n_mode = 'free' or n_mode = 'anony' or n_mode = 'secondhand' or n_mode = 'all' order by n_regdate desc
+	</select>
+	
+	<!-- 게시판공지글 찾기 -->
+	<select id="adminFindBNotice" parameterType="map" resultType="noticeDTO">
+		select * from (select * from f_notice where n_mode = 'free' or n_mode = 'anony' or n_mode = 'secondhand' or n_mode = 'all') where ${search} like '%'||#{searchString}||'%'
+	</select>
+	
+	<!-- 자유게시판 목록 -->
+	<select id="adminlistFreeBoard" parameterType="map" resultType="boardDTO">
+		select b.*, m.mem_nickname from (select rownum rn, A.* from (select * from f_board where board_anony_check=0 order by board_re_group desc, board_re_step asc)A) b left join f_member m on b.mem_num = m.mem_num where rn between #{start} and #{end}
+	</select>
+	<!-- 익명게시판 목록 -->
+	<select id="adminlistAnonyBoard" parameterType="map" resultType="boardDTO">
+		select b.*, m.mem_nickname from (select rownum rn, A.* from (select * from f_board where board_anony_check=1 order by board_re_group desc, board_re_step asc)A) b left join f_member m on b.mem_num = m.mem_num where rn between #{start} and #{end}
+	</select>
+	<!-- 중고게시판 목록 -->
+	<select id="adminlistSHBoard" parameterType="map" resultType="SH_boardDTO">
+		select b.*, m.mem_nickname from (select rownum rn, A.* from (select * from f_sh_board order by board_re_group desc, board_re_step asc)A) b left join f_member m on b.mem_num = m.mem_num where rn between #{start} and #{end} order by board_num desc
+	</select>
+
+	<!-- 자유, 익명 게시판 댓글 목록 -->
+	<select id="adminListBoardReply" parameterType="int" resultType="board_replyDTO">
+		select b.*, m.mem_nickname from f_board_reply b left join f_member m on b.mem_num = m.mem_num where board_num = #{board_num}
+	</select>
+	
+	<!-- 자유, 익명 게시판 신고 댓글 목록 -->
+	<select id="adminListBoardReplyReport" parameterType="int" resultType="board_replyDTO">
+		select b.*, m.mem_nickname from f_board_reply b left join f_member m on b.mem_num = m.mem_num where board_num = #{board_num} and b.br_report > 0
+	</select>
+	
+	<!-- 중고 게시판 댓글 목록 -->
+	<select id="adminListBoardSHReply" parameterType="int" resultType="SH_board_replyDTO">
+		select b.*, m.mem_nickname from f_sh_board_reply b left join f_member m on b.mem_num = m.mem_num where board_num = #{board_num}
+	</select>
+	<!-- 중고 게시판 신고 댓글 목록 -->
+	<select id="adminListBoardSHReplyReport" parameterType="int" resultType="SH_board_replyDTO">
+		select b.*, m.mem_nickname from f_sh_board_reply b left join f_member m on b.mem_num = m.mem_num where board_num = #{board_num} and b.br_report > 0
+	</select>
+	
+	<!-- 익명, 자유 게시판 상세보기 -->
+	<select id="adminGetBoard" parameterType="int" resultType="boardDTO">
+		select b.*, m.mem_nickname from f_board b left join f_member m on b.mem_num = m.mem_num where board_num = #{board_num} 
+	</select>
+	
+	<!-- 중고 게시판 상세보기 -->
+	<select id="adminGetBoardSH" parameterType="int" resultType="SH_boardDTO">
+		select b.*, m.mem_nickname from f_sh_board b left join f_member m on b.mem_num = m.mem_num where board_num = #{board_num}
+	</select>
+	
+	<!-- 중고 게시판 댓글 신고 내역 -->
+	<select id="adminListReportBr_sh" parameterType="int" resultType="reportDTO">
+		select r.*, m.mem_nickname from f_report r left join f_member m on r.mem_num = m.mem_num where report_target = #{report_target} and report_mode = '중고댓글'
+	</select>
+	<!-- 익명, 자유 게시판 댓글 신고 내역 -->
+	<select id="adminListReportBr" parameterType="int" resultType="reportDTO">
+		select r.*, m.mem_nickname from f_report r left join f_member m on r.mem_num = m.mem_num where report_target = #{report_target} and report_mode = '자유,익명댓글'
+	</select>
+	
+	<!-- 중고 게시글 신고내역 -->
+	<select id="adminListReportBoard_sh" parameterType="int" resultType="reportDTO">
+		select r.*, m.mem_nickname from f_report r left join f_member m on r.mem_num = m.mem_num where report_target = #{report_target} and report_mode = '중고게시글'
+	</select>
+	<!-- 익명, 자유게시글 신고 내역 -->
+	<select id="adminListReportBoard" parameterType="int" resultType="reportDTO">
+		select r.*, m.mem_nickname from f_report r left join f_member m on r.mem_num = m.mem_num where report_target = #{report_target} and report_mode = '자유,익명게시글'
+	</select>
+	
+	<!-- 중고 게시글 신고 취소 -->
+	<delete id="adminDelReportBoard_sh" parameterType="int">
+		delete from f_report where report_target = #{report_target} and report_mode = '중고게시글'
+	</delete>
+	<update id="adminUpdateReportBoard_sh" parameterType="int">
+		update f_sh_board set board_report = 0 where board_num = #{board_num}
+	</update>
+	<!-- 익명, 자유 게시글 신고 취소 -->
+	<delete id="adminDelReportBoard" parameterType="int">
+		delete from f_report where report_target = #{report_target} and report_mode = '자유,익명게시글'
+	</delete>
+	<update id="adminUpdateReportBoard" parameterType="int">
+		update f_board set board_report = 0 where board_num = #{board_num}
+	</update>
+	
+	<!-- 중고 게시글 댓글 신고 취소 -->
+	<delete id="adminDelReportBr_sh" parameterType="int">
+		delete from f_report where report_target = #{report_target} and report_mode = '중고댓글'
+	</delete>
+	<update id ="adminUpdateReportBr_sh" parameterType="int">
+		update f_sh_board_reply set br_report = 0 where br_num = #{br_num}
+	</update>
+	
+	<!-- 익명, 자유 게시글 댓글 신고 취소 -->
+	<delete id="adminDelReportBr" parameterType="int">
+		delete from f_report where report_target = #{report_target} and report_mode = '자유,익명댓글'
+	</delete>
+	<update id ="adminUpdateReportBr" parameterType="int">
+		update f_board_reply set br_report = 0 where br_num = #{br_num}
+	</update>
+	
+	<!-- 중고 게시글 신고 처리 0 ->1 -->
+	<update id="adminCheckReportBoard_sh" parameterType="int">
+		update f_report set report_check = 1 where report_target = #{report_target} and report_mode = '중고게시글'
+	</update>
+	<!-- 익명, 자유 게시글 신고 처리 0 ->1 -->
+	<update id="adminCheckReportBoard" parameterType="int">
+		update f_report set report_check = 1 where report_target = #{report_target} and report_mode = '자유,익명게시글'
+	</update>
+	
+	<!-- 중고 게시판 댓글 삭제 -->
+	<delete id="adminDelBr_sh" parameterType="int">
+		delete from f_sh_board_reply where br_num = #{br_num}
+	</delete>
+	<!-- 익명, 자유 게시판 댓글 삭제 -->
+	<delete id="adminDelBr" parameterType="int">
+		delete from f_board_reply where br_num = #{br_num}
+	</delete>
+	
+	<!-- 중고 게시판 댓글 신고 처리여부 0 ->1 -->
+	<update id="adminCheckReportBr_sh" parameterType="int">
+		update f_report set report_check = 1 where report_target = #{report_target} and report_mode = '중고댓글'
+	</update>
+	<!-- 익명, 자유 게시판 댓글 신고 처리여부 0 ->1 -->
+	<update id="adminCheckReportBr" parameterType="int">
+		update f_report set report_check = 1 where report_target = #{report_target} and report_mode = '자유,익명댓글'
+	</update>
+</mapper>
