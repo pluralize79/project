@@ -4,7 +4,7 @@
 <%@include file="shop_top.jsp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<h2>브란치kjh 수정</h2>
+<h2>브란치kjh 수정 머지해주세용</h2>
 <script type="text/javascript">
 	let cart_qty = document.getElentById("cart_qty").value;
 	//let prod_like = document.getElentById("prod_like").value;
